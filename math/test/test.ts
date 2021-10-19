@@ -1,5 +1,5 @@
-import { Complex } from './lib/Complex';
-import { Cicle, LineThroughZero, NonZeroLine } from './lib/GeneralisedCircle';
+import { Complex } from './test/Complex';
+import { Cicle, LineThroughZero, NonZeroLine } from '../GeneralisedCircle';
 
 const nzls = Array(10000).fill(0)
 	.map(() => new NonZeroLine(new Complex(
