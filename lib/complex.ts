@@ -3,8 +3,8 @@ export class Complex {
 	// eslint-disable-next-line no-useless-constructor, no-empty-function
 	constructor(public r: number, public i = 0) {}
 
-	equals({ r, i }: Complex): boolean {
-		return this.r === r && this.i === i;
+	equals(c: Complex): boolean {
+		return this.sub(c).sqrlength < 1e-28;
 	}
 
 	add({ r, i }: Complex): Complex {
@@ -19,9 +19,26 @@ export class Complex {
 		return new Complex(this.r * r - this.i * i, this.r * i + r * this.i);
 	}
 
-	div({ r, i }: Complex): Complex {
-		const sqr = r * r + i * i;
-		return new Complex((this.r * r + this.i * i) / sqr, (this.i * r - this.r * i) / sqr);
+	get conjugate(): Complex {
+		return new Complex(this.r, -this.i);
+	}
+
+	get sqrlength(): number {
+		return this.i * this.i + this.r * this.r;
+	}
+
+	get length(): number {
+		return Math.sqrt(this.sqrlength);
+	}
+
+	div({ conjugate, sqrlength }: Complex): Complex {
+		const res = this.mul(conjugate);
+		res.i /= sqrlength; res.r /= sqrlength;
+		return res;
+	}
+
+	get inverse(): Complex {
+		return Complex.ONE.div(this);
 	}
 
 	exp(): Complex {
@@ -29,11 +46,23 @@ export class Complex {
 		return new Complex(er * Math.cos(this.i), er * Math.sin(this.i));
 	}
 
-	get length(): number {
-		return this.i * this.i + this.r * this.r;
-	}
-
 	get normalize(): Complex {
 		return this.div(new Complex(this.length));
+	}
+
+	static get ONE(): Complex {
+		return new Complex(1);
+	}
+
+	static get I(): Complex {
+		return new Complex(0, 1);
+	}
+
+	static get MONE(): Complex {
+		return new Complex(-1);
+	}
+
+	static get MI(): Complex {
+		return new Complex(0, -1);
 	}
 }
