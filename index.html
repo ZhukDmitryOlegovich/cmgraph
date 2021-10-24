@@ -9,10 +9,19 @@
 <body style="background-color: rgb(184, 184, 184);">
 	<div id="stage-container" style="width: 400px; height: 400px; background-color: white;"></div>
 
-	<script src="https://cdn.anychart.com/js/latest/graphics.js"></script>
-	<script>
+	<script src="./graph/graphics.min.js"></script>
+	<script type="module" src="./math/test/test.js"></script>
+	<script type="module">
+		import { Cicle } from './math/GeneralisedCircle.js';
+		import { Complex } from './math/Complex.js';
 		// create a stage
 		const stage = acgraph.create('stage-container');
+
+		var a = new Cicle(new Complex(1,2),3)
+
+		const c = stage.circle(300, 150, 70);
+
+		console.log(a);
 
 		// console.log(Object.getOwnPropertyNames(stage), stage);
 

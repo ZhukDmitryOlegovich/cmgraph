@@ -1,5 +1,6 @@
-import { Complex } from './test/Complex';
-import { Cicle, LineThroughZero, NonZeroLine } from '../GeneralisedCircle';
+/* eslint-disable no-console */
+import { Complex } from '../Complex';
+import { Сircle, LineThroughZero, NonZeroLine } from '../GeneralisedCircle';
 
 const nzls = Array(10000).fill(0)
 	.map(() => new NonZeroLine(new Complex(
@@ -28,10 +29,10 @@ console.dir(
 );
 
 const cs = Array(10000).fill(0)
-	.map(() => new Cicle(new Complex(
+	.map(() => new Сircle(new Complex(
 		Math.random() * 10, Math.random() * 10,
 	), Math.random() * 10))
-	.map((c) => [c, c.inverse.inverse] as Cicle[]);
+	.map((c) => [c, c.inverse.inverse] as Сircle[]);
 
 console.log(
 	'Cicle:',

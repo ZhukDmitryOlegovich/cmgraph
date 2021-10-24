@@ -3,11 +3,15 @@ export class Complex {
 	// eslint-disable-next-line no-useless-constructor, no-empty-function
 	constructor(public r: number, public i = 0) {}
 
-	// надо срочно переезжать на дроби
+	// todo: надо срочно переезжать на дроби
 	static readonly MAX_PRECISION = 1e-10;
 
 	equal(c: Complex): boolean {
 		return this.sub(c).sqrlength < Complex.MAX_PRECISION ** 2;
+	}
+
+	get equalZero(): boolean {
+		return this.sqrlength < Complex.MAX_PRECISION ** 2;
 	}
 
 	add({ r, i }: Complex): Complex {
@@ -26,22 +30,26 @@ export class Complex {
 		return new Complex(this.r * r, this.i * r);
 	}
 
+	/**
+	 * Сопряженное (a + b*i) => (a - b*i)
+	 */
 	get conjugate(): Complex {
 		return new Complex(this.r, -this.i);
 	}
 
 	get sqrlength(): number {
-		return this.i * this.i + this.r * this.r;
+		return this.i ** 2 + this.r ** 2;
 	}
 
 	get length(): number {
 		return Math.sqrt(this.sqrlength);
 	}
 
-	div({ conjugate, sqrlength }: Complex): Complex {
-		const res = this.mul(conjugate);
-		res.i /= sqrlength; res.r /= sqrlength;
-		return res;
+	div({ r, i, sqrlength }: Complex): Complex {
+		return new Complex(
+			(this.r * r + this.i * i) / sqrlength,
+			(this.i * r - this.r * i) / sqrlength,
+		);
 	}
 
 	divR(r: number): Complex {
@@ -49,7 +57,8 @@ export class Complex {
 	}
 
 	get inverse(): Complex {
-		return Complex.ONE.div(this);
+		const { sqrlength } = this;
+		return new Complex(this.r / sqrlength, -this.i / sqrlength);
 	}
 
 	exp(): Complex {
@@ -67,13 +76,5 @@ export class Complex {
 
 	get normalize(): Complex {
 		return this.divR(this.length);
-	}
-
-	static get ZERO(): Complex {
-		return new Complex(0);
-	}
-
-	static get ONE(): Complex {
-		return new Complex(1);
 	}
 }

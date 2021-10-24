@@ -27,7 +27,7 @@ export class LineThroughZero implements OperationDLO {
 	// eslint-disable-next-line no-use-before-define
 	move(c: Complex): LineThroughZero | NonZeroLine {
 		const core = c.projection(this.c);
-		return core.equal(Complex.ZERO)
+		return core.equalZero
 			? new LineThroughZero(this.c)
 			// eslint-disable-next-line no-use-before-define
 			: new NonZeroLine(core);
@@ -43,10 +43,10 @@ export class NonZeroLine implements OperationDLO {
 	}
 
 	// eslint-disable-next-line no-use-before-define
-	get inverse(): Cicle {
+	get inverse(): Сircle {
 		const core = this.c.inverse.divR(2);
 		// eslint-disable-next-line no-use-before-define
-		return new Cicle(core, core.length);
+		return new Сircle(core, core.length);
 	}
 
 	rotateAndScale(c: Complex): NonZeroLine {
@@ -55,46 +55,46 @@ export class NonZeroLine implements OperationDLO {
 
 	move(c: Complex): LineThroughZero | NonZeroLine {
 		const core = c.add(this.c).projection(this.c);
-		return core.equal(Complex.ZERO)
+		return core.equalZero
 			? new LineThroughZero(this.c)
 			: new NonZeroLine(core);
 	}
 }
 
-export class Cicle implements OperationDLO {
+export class Сircle implements OperationDLO {
 	// eslint-disable-next-line no-useless-constructor, no-empty-function
 	constructor(public c: Complex, public r: number) {}
 
 	equal(c: any): boolean {
-		return c instanceof Cicle
+		return c instanceof Сircle
 			&& this.c.equal(c.c)
 			&& Math.abs(this.r - c.r) < Complex.MAX_PRECISION;
 	}
 
-	get inverse(): Cicle | NonZeroLine {
+	get inverse(): Сircle | NonZeroLine {
 		if (Math.abs(this.c.length - this.r) < Complex.MAX_PRECISION) {
 			return new NonZeroLine(this.c.mulR(2).inverse);
 		}
 
-		if (this.c.equal(Complex.ZERO)) {
-			return new Cicle(Complex.ZERO, 1 / this.r);
+		if (this.c.equalZero) {
+			return new Сircle(new Complex(0), 1 / this.r);
 		}
 
 		const { sqrlength } = this.c;
 
-		return new Cicle(
+		return new Сircle(
 			this.c.inverse.mulR(sqrlength / (sqrlength - this.r ** 2)),
 			this.r / Math.abs(sqrlength - this.r ** 2),
 		);
 	}
 
-	rotateAndScale(c: Complex): Cicle {
-		return new Cicle(this.c.mul(c), this.r * c.r);
+	rotateAndScale(c: Complex): Сircle {
+		return new Сircle(this.c.mul(c), this.r * c.r);
 	}
 
-	move(c: Complex): Cicle {
-		return new Cicle(this.c.add(c), this.r);
+	move(c: Complex): Сircle {
+		return new Сircle(this.c.add(c), this.r);
 	}
 }
 
-export type GeneralisedCircle = LineThroughZero | NonZeroLine | Cicle;
+export type GeneralisedCircle = LineThroughZero | NonZeroLine | Сircle;
