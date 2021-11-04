@@ -1,5 +1,6 @@
-export { Fraction } from './Fraction';
-export { Complex } from './Complex';
 export {
-	Сircle, GeneralisedCircle, LineThroughZero, NonZeroLine,
+	GeneralisedCircle, LineThroughZero, NonZeroLine, Сircle,
 } from './GeneralisedCircle';
+export {
+	allExpressionParam, Complex, ExpressionPP, NerdamerPP, nerdamerpp,
+} from './nerdamerpp';
