@@ -17,9 +17,9 @@ export class SimpleComplex {
 	// 		: c;
 	// }
 
-	static realpart = (c: SimpleComplex) => c.realpart;
+	static realpart(c: SimpleComplex) { return c.realpart; }
 
-	static imagpart = (c: SimpleComplex) => c.imagpart;
+	static imagpart(c: SimpleComplex) { return c.imagpart; }
 
 	static value = (
 		value: SimpleComplex | SimpleFraction | BigIntPP | bigint,
@@ -34,7 +34,7 @@ export class SimpleComplex {
 		return this.realpart.eq(realpart) && this.imagpart.eq(imagpart);
 	}
 
-	toString = (): string => `${this.realpart}+i*${this.imagpart}`.replace('+i*-', '-i*');
+	toString(): string { return `${this.realpart}+i*${this.imagpart}`.replace('+i*-', '-i*'); }
 
 	add(value: SimpleComplex | SimpleFraction | BigIntPP | bigint): SimpleComplex {
 		const [realpart, imagpart] = SimpleComplex.value(value);
@@ -91,17 +91,19 @@ export class SimpleComplex {
 	// 	return new SimpleComplex(er * Math.cos(this.imagpart), er * Math.sin(this.imagpart));
 	// }
 
-	scalar = (
-		{ realpart, imagpart }: SimpleComplex,
-	): SimpleFraction => this.realpart.mul(realpart).add(this.imagpart.mul(imagpart));
+	scalar({ realpart, imagpart }: SimpleComplex): SimpleFraction {
+		return this.realpart.mul(realpart).add(this.imagpart.mul(imagpart));
+	}
 
-	projection = ({ normalize }: SimpleComplex): SimpleComplex => this.mul(this.scalar(normalize));
+	projection({ normalize }: SimpleComplex): SimpleComplex {
+		return this.mul(this.scalar(normalize));
+	}
 
 	get normalize(): SimpleComplex {
 		return this.div(this.length);
 	}
 
-	сollinearity = (
-		{ realpart, imagpart }: SimpleComplex,
-	): boolean => this.realpart.mul(imagpart).eq(this.imagpart.mul(realpart));
+	сollinearity({ realpart, imagpart }: SimpleComplex): boolean {
+		return this.realpart.mul(imagpart).eq(this.imagpart.mul(realpart));
+	}
 }

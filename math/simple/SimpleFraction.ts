@@ -19,7 +19,7 @@ export class SimpleFraction {
 		}
 	}
 
-	static fromNumber = (n: number) => {
+	static fromNumber(n: number) {
 		const m = n.toExponential(60).match(/^(-?\d).(\d*?)0*e([+-]\d+)$/);
 
 		if (m === null) {
@@ -36,9 +36,9 @@ export class SimpleFraction {
 		).normalize;
 	}
 
-	static numerator = (f: SimpleFraction) => f.numerator;
+	static numerator(f: SimpleFraction) { return f.numerator; }
 
-	static denominator = (f: SimpleFraction) => f.denominator;
+	static denominator(f: SimpleFraction) { return f.denominator; }
 
 	static value = (value: SimpleFraction | BigIntPP | bigint): SimpleFractionValue => (
 		value instanceof SimpleFraction
@@ -75,7 +75,7 @@ export class SimpleFraction {
 		return Number(s);
 	}
 
-	toString = (): string => `${this.numerator}${this.denominator === 1n ? '' : `/${this.denominator}`}`;
+	toString(): string { return `${this.numerator}${this.denominator === 1n ? '' : `/${this.denominator}`}`; }
 
 	add(value: SimpleFraction | BigIntPP | bigint): SimpleFraction {
 		const [numerator, denominator] = SimpleFraction.value(value);
@@ -103,10 +103,9 @@ export class SimpleFraction {
 		return new SimpleFraction(this.numerator * denominator, this.denominator * numerator);
 	}
 
-	pow = (value: bigint): SimpleFraction => new SimpleFraction(
-		this.numerator ** value,
-		this.denominator ** value,
-	);
+	pow(value: bigint): SimpleFraction {
+		return new SimpleFraction(this.numerator ** value, this.denominator ** value);
+	}
 
 	get inverse() {
 		return new SimpleFraction(this.denominator, this.numerator);

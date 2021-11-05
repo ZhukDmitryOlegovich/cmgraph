@@ -3,7 +3,7 @@ import { LineThroughZero, NonZeroLine, Сircle } from './medium';
 import { SimpleComplex, SimpleFraction } from './simple';
 
 console.time('test');
-const length = 1000;
+const length = 100;
 
 console.time('NonZeroLine');
 const nzls = Array(length).fill(0)
