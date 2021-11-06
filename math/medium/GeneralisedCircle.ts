@@ -1,4 +1,4 @@
-import { SimpleComplex, SimpleFraction } from '../simple';
+import { SimpleComplex, SimpleFraction } from '@/math/simple';
 
 interface OperationDLO {
 	eq(c: any): boolean;

@@ -4,14 +4,18 @@
 <head>
 	<meta charset="utf-8" />
 	<title>GraphicsJS Basic Example</title>
+	<link rel="shortcut icon" href="/favicon.png">
 </head>
 
 <body style="background-color: rgb(184, 184, 184);">
-	<div id="stage-container" style="width: 400px; height: 400px; background-color: white;"></div>
+	<!-- <div id="stage-container" style="width: 400px; height: 400px; background-color: white;"></div> -->
 
 	<!-- <script src="./graph/graphics.min.js"></script> -->
-	<script type="module" src="./math/test.js"></script>
+	<!-- <script type="module" src="/math/test.js"></script> -->
+	<script src="https://pixijs.download/release/pixi.min.js"></script>
+	<script src="/graph/test.js"></script>
 	<script type="module">
+		console.log(11);
 		setTimeout(() => {
 			console.log(12);
 		}, 1000);
