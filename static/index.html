@@ -8,14 +8,24 @@
 </head>
 
 <body style="background-color: rgb(184, 184, 184);">
-	<p>Положение: <input id="range" type="range" min="-200" max="200" step="1" value="100"></p>
-	<p>Скорость: <input id="speed" type="range" min="-4" max="4" step="0.1" value="1"></p>
+	<table>
+		<tr>
+			<th>
+				<p>Положение: <input id="range" type="range" min="-200" max="200" step="1" value="100"></p>
+				<p>Скорость: <input id="speed" type="range" min="-4" max="4" step="0.1" value="1"></p>
+			</th>
+			<th>
+				<p>Состояние: <button id="left"> < </button> <button id="right" value=">"> > </button></p>
+			</th>
+		</tr>
+	</table>
 	<!-- <div id="stage-container" style="width: 400px; height: 400px; background-color: white;"></div> -->
 
 	<!-- <script src="./graph/graphics.min.js"></script> -->
-	<!-- <script type="module" src="/math/test.js"></script> -->
-	<script src="https://pixijs.download/release/pixi.min.js"></script>
-	<script src="/graph/test.js"></script>
+	<script type="module" src="/math/test.js"></script>
+	<!-- <script src="https://pixijs.download/release/pixi.min.js"></script> -->
+	<!-- <script type="module" src="/graph/test.js"></script> -->
+	<!-- <script type="module" src="/graph/index.js"></script> -->
 	<script type="module">
 		console.log(11);
 		setTimeout(() => {

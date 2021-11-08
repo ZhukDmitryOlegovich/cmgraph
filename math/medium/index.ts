@@ -1,3 +1,4 @@
 export {
-	GeneralisedCircle, LineThroughZero, NonZeroLine, Сircle,
+	Circle, GeneralisedCircle,
+	LineThroughZero, NonZeroLine,
 } from './GeneralisedCircle';

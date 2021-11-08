@@ -1,5 +1,6 @@
 export {
-	GeneralisedCircle, LineThroughZero, NonZeroLine, Сircle,
+	Circle, GeneralisedCircle,
+	LineThroughZero, NonZeroLine,
 } from './medium';
 export {
 	BigIntPP, BigIntPPValue,

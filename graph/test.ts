@@ -1,5 +1,9 @@
 import PIXI from 'pixi.js';
 
+import { Color } from './color';
+import { createFillStyle, createLineStyle } from './create';
+import PIXIPP from './pixipp';
+
 // eslint-disable-next-line no-undef
 declare const document: Document;
 
@@ -7,26 +11,6 @@ const app = new PIXI.Application({
 	antialias: true, backgroundColor: 0xFFFFFF, width: 800, height: 800,
 });
 document.body.appendChild(app.view);
-
-const createFillStyle = (opt: PIXI.IFillStyleOptions & {visible?: boolean}): PIXI.FillStyle => {
-	const ans = new PIXI.FillStyle();
-	opt.visible ??= true;
-
-	// @ts-ignore
-	Object.entries(opt).forEach(([type, val]) => { if (val) ans[type] = val; });
-
-	return ans;
-};
-
-const createLineStyle = (opt: PIXI.ILineStyleOptions & {visible?: boolean}): PIXI.LineStyle => {
-	const ans = new PIXI.LineStyle();
-	opt.visible ??= true;
-
-	// @ts-ignore
-	Object.entries(opt).forEach(([type, val]) => { if (val) ans[type] = val; });
-
-	return ans;
-};
 
 const c1 = new PIXI.GraphicsData(
 	new PIXI.Circle(0, 0, 50),
@@ -40,13 +24,40 @@ const c2 = new PIXI.GraphicsData(
 	c1.lineStyle,
 );
 
-const gg = new PIXI.GraphicsGeometry();
-
-gg.graphicsData.push(c1, c2);
+const gg = new PIXIPP.GraphicsGeometryPP(c1, c2);
 
 const g = new PIXI.Graphics(gg);
 
-app.stage.addChild(g);
+const emptyfillstyle = createFillStyle({ color: Color('gray') });
+const greylinestyle = createLineStyle({ width: 2, color: Color('grey') });
+
+const pole = new PIXI.Graphics((() => {
+	const ans = new PIXI.GraphicsGeometry();
+	const { width, height } = app.screen;
+
+	console.log({ width, height });
+
+	ans.graphicsData = Array(8).fill(0).map((_, i) => new PIXI.GraphicsData(
+		new PIXI.Polygon([
+			{ x: i * 100, y: 0 },
+			{ x: i * 100, y: width },
+		]),
+		emptyfillstyle,
+		greylinestyle,
+	));
+	ans.graphicsData.push(...Array(8).fill(0).map((_, i) => new PIXI.GraphicsData(
+		new PIXI.Polygon([
+			{ y: i * 100, x: 0 },
+			{ y: i * 100, x: height },
+		]),
+		emptyfillstyle,
+		greylinestyle,
+	)));
+
+	return ans;
+})());
+
+app.stage.addChild(pole, g);
 
 // eslint-disable-next-line no-undef
 const input = document.getElementById('range') as HTMLInputElement | null;
@@ -54,23 +65,9 @@ const input = document.getElementById('range') as HTMLInputElement | null;
 input?.addEventListener('input', (e) => {
 	if (c2.shape instanceof PIXI.Circle) {
 		c2.shape.x = Number(input.value);
-		// @ts-ignore
-		gg.invalidate();
+		gg.rerender();
 	}
 });
-
-// Circle
-// graphics.lineStyle(1); // draw a circle, set the lineStyle to zero so the circle doesn't have an outline
-// const g1 = new PIXI.Graphics()
-// 	.lineStyle(1)
-// 	.beginFill(0x0000FF)
-// 	.drawShape(c1)
-// 	.endFill();
-// const g2 = new PIXI.Graphics()
-// 	.lineStyle(1)
-// 	.beginFill(0x00FF00)
-// 	.drawCircle(2 * 50, 0, 50)
-// 	.endFill();
 
 console.log(
 	[
@@ -79,11 +76,8 @@ console.log(
 	],
 );
 
-// graphics.pivot.copyFrom({ x: graphics.width / 2, y: graphics.height / 2 });
 const { width, height } = app.screen;
 g.position.copyFrom({ x: width / 2, y: height / 2 });
-
-// g.beginFill(0x00FF00).drawCircle(0, 0, 10).endFill();
 
 console.log(
 	[

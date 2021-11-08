@@ -9,7 +9,7 @@ interface OperationDLO {
 
 export class LineThroughZero implements OperationDLO {
 	// eslint-disable-next-line no-useless-constructor
-	constructor(public c: SimpleComplex) { /* */ }
+	constructor(public readonly c: SimpleComplex) { /* */ }
 
 	eq(lts: any): boolean {
 		return lts instanceof LineThroughZero && this.c.сollinearity(lts.c);
@@ -35,17 +35,17 @@ export class LineThroughZero implements OperationDLO {
 
 export class NonZeroLine implements OperationDLO {
 	// eslint-disable-next-line no-useless-constructor, no-empty-function
-	constructor(public c: SimpleComplex) {}
+	constructor(public readonly c: SimpleComplex) {}
 
 	eq(nzl: any): boolean {
 		return nzl instanceof NonZeroLine && this.c.eq(nzl.c);
 	}
 
 	// eslint-disable-next-line no-use-before-define
-	get inverse(): Сircle {
+	get inverse(): Circle {
 		const core = this.c.inverse.div(2n);
 		// eslint-disable-next-line no-use-before-define
-		return new Сircle(core, core.length);
+		return new Circle(core, core.sqrlength);
 	}
 
 	rotateAndScale(c: SimpleComplex): NonZeroLine {
@@ -60,42 +60,42 @@ export class NonZeroLine implements OperationDLO {
 	}
 }
 
-export class Сircle implements OperationDLO {
+export class Circle implements OperationDLO {
 	// eslint-disable-next-line no-useless-constructor, no-empty-function
-	constructor(public c: SimpleComplex, public r: SimpleFraction) {}
+	constructor(public readonly c: SimpleComplex, public readonly r2: SimpleFraction) {}
 
 	eq(c: any): boolean {
-		return c instanceof Сircle && this.c.eq(c.c) && this.r.eq(c.r);
+		return c instanceof Circle && this.c.eq(c.c) && this.r2.eq(c.r2);
 	}
 
-	get inverse(): Сircle | NonZeroLine {
-		if (this.c.length.eq(this.r)) {
+	get inverse(): Circle | NonZeroLine {
+		if (this.c.sqrlength.eq(this.r2)) {
 			return new NonZeroLine(this.c.mul(2n).inverse);
 		}
 
 		if (this.c.eq(0n)) {
-			return new Сircle(
+			return new Circle(
 				new SimpleComplex(new SimpleFraction(0n), new SimpleFraction(0n)),
-				this.r.inverse,
+				this.r2.inverse,
 			);
 		}
 
 		const { sqrlength } = this.c;
-		const div = sqrlength.sub(this.r.pow(2n));
+		const div = sqrlength.sub(this.r2);
 
-		return new Сircle(
+		return new Circle(
 			this.c.inverse.mul(sqrlength.div(div)),
-			this.r.div(div.abs),
+			this.r2.div(div.pow(2n)),
 		);
 	}
 
-	rotateAndScale(c: SimpleComplex): Сircle {
-		return new Сircle(this.c.mul(c), this.r.mul(SimpleComplex.realpart(c)));
+	rotateAndScale(c: SimpleComplex): Circle {
+		return new Circle(this.c.mul(c), this.r2.mul(c.sqrlength));
 	}
 
-	move(c: SimpleComplex): Сircle {
-		return new Сircle(this.c.add(c), this.r);
+	move(c: SimpleComplex): Circle {
+		return new Circle(this.c.add(c), this.r2);
 	}
 }
 
-export type GeneralisedCircle = LineThroughZero | NonZeroLine | Сircle;
+export type GeneralisedCircle = LineThroughZero | NonZeroLine | Circle;

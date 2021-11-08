@@ -7,7 +7,7 @@ export class SimpleComplex {
 	// eslint-disable-next-line no-useless-constructor
 	constructor(
 		private realpart: SimpleFraction,
-		private imagpart: SimpleFraction,
+		private imagpart: SimpleFraction = new SimpleFraction(0n),
 	) { /**/ }
 
 	// static create(realpart: BigIntPP, imagpart: BigIntPP): SimpleComplex | SimpleFraction | BigIntPP {
@@ -69,6 +69,14 @@ export class SimpleComplex {
 	get length(): SimpleFraction {
 		return SimpleFraction.fromNumber(Math.sqrt(this.sqrlength.valueOf()));
 	}
+
+	// get arg(): number {
+	// 	let x = this.realpart.valueOf();
+	// 	let y = this.imagpart.valueOf();
+	// 	const length = Math.sqrt(x ** 2 + y ** 2);
+	// 	x /= length;
+	// 	return Math.a
+	// }
 
 	div(value: SimpleComplex | SimpleFraction | BigIntPP | bigint): SimpleComplex {
 		const { sqrlength, realpart, imagpart } = new SimpleComplex(...SimpleComplex.value(value));
