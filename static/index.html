@@ -5,45 +5,73 @@
 	<meta charset="utf-8" />
 	<title>GraphicsJS Basic Example</title>
 	<link rel="shortcut icon" href="/favicon.png">
+	<link rel="stylesheet" href="/reset.css">
+	<link rel="stylesheet" href="/main.css">
 </head>
 
-<body style="background-color: rgb(184, 184, 184);">
+<body style="background-color: #b8b8b8;">
 	<table>
 		<tr>
 			<th>
 				<p>Положение: <input id="range" type="range" min="-200" max="200" step="1" value="100"></p>
-				<p>Скорость: <input id="speed" type="range" min="-4" max="4" step="0.1" value="1"></p>
+				<p>Скорость: <input id="speed" type="range" min="-1" max="1" step="0.025" value="0.5"></p>
 			</th>
 			<th>
-				<p>Состояние: <button id="left"> < </button> <button id="right" value=">"> > </button></p>
+				<p>Состояние:
+					<button id="left"> &#x23F4; </button>
+					<button id="stop-start"> &#x23EF; </button>
+					<button id="right"> &#x23F5; </button>
+					<button id="refresh"> &#x1F504; </button>
+				</p>
 			</th>
 		</tr>
 	</table>
-	<!-- <div id="stage-container" style="width: 400px; height: 400px; background-color: white;"></div> -->
-
-	<!-- <script src="./graph/graphics.min.js"></script> -->
-	<script type="module" src="/math/test.js"></script>
-	<!-- <script src="https://pixijs.download/release/pixi.min.js"></script> -->
+	<div class="wrap-row application">
+		<div id="draw-container"></div>
+		<div class="right-bar">
+			<div id="figures">
+				<div class="block-info" data-chosen="Circle">
+					<p>
+						Тип:<select onchange="this.parentNode.parentNode.dataset.chosen = this.value;">
+							<option selected value="Circle" >Circle</option>
+							<option value="NonZeroLine">NonZeroLine</option>
+							<option value="LineThroughZero">LineThroughZero</option>
+						</select>
+					</p>
+					<p><tt>x</tt> := <input type="number" placeholder="0" style="width: 5em;">
+						+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
+					<p><tt>y</tt> := <input type="number" placeholder="0" style="width: 5em;">
+						+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
+					<p class="need-disabled"><tt>r</tt> := <input type="number" placeholder="0" value="1" style="width: 5em;">
+				</div>
+				<!-- <button class="add-element">+</button> -->
+			</div>
+			<div id="tranzit" style="flex: 1 1 auto; background-color: #00ff151c; overflow-y: scroll;">
+				<div class="block-info" data-chosen="move" style="display: none;">
+					<button class="delete-element" onclick="this.parentNode.remove()">x</button>
+					<p>
+						Тип:<select onchange="this.parentNode.parentNode.dataset.chosen = this.value;">
+							<option selected value="move">move</option>
+							<option value="inverse">inverse</option>
+							<option value="rotateAndScale">rotateAndScale</option>
+						</select>
+					</p>
+					<p class="need-disabled"><tt>c</tt> := <input type="number" placeholder="0" style="width: 5em;">
+						+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
+				</div>
+				<button class="add-element">+</button>
+			</div>
+		</div>
+	</div>
+	<!-- <script type="module" src="/math/test.js"></script> -->
+	<script src="https://pixijs.download/release/pixi.min.js"></script>
 	<!-- <script type="module" src="/graph/test.js"></script> -->
-	<!-- <script type="module" src="/graph/index.js"></script> -->
+	<script type="module" src="/graph/index.js"></script>
 	<script type="module">
 		console.log(11);
 		setTimeout(() => {
 			console.log(12);
 		}, 1000);
-
-		// document.getElementById('stage-container').style.backgroundColor = 'red';
-
-		// import { Cicle } from './math/GeneralisedCircle.js';
-		// import { Complex } from './math/Complex.js';
-		// create a stage
-		// const stage = acgraph.create('stage-container');
-
-		// var a = new Cicle(new Complex(1,2),3)
-
-		// const c = stage.circle(300, 150, 70);
-
-		// console.log(a);
 	</script>
 </body>
 

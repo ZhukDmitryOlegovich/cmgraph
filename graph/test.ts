@@ -2,7 +2,7 @@ import PIXI from 'pixi.js';
 
 import { Color } from './color';
 import { createFillStyle, createLineStyle } from './create';
-import PIXIPP from './pixipp';
+import { GraphicsGeometryPP } from './pixipp';
 
 // eslint-disable-next-line no-undef
 declare const document: Document;
@@ -14,48 +14,76 @@ document.body.appendChild(app.view);
 
 const c1 = new PIXI.GraphicsData(
 	new PIXI.Circle(0, 0, 50),
-	createFillStyle({ color: 0x0000FF }),
+	createFillStyle({ color: 0x0000FF, alpha: 0.5 }),
 	createLineStyle({ width: 1 }),
 );
 
 const c2 = new PIXI.GraphicsData(
 	new PIXI.Circle(100, 0, 50),
-	createFillStyle({ color: 0x00FF00 }),
+	createFillStyle({ color: 0x00FF00, alpha: 0.5 }),
 	c1.lineStyle,
 );
 
-const gg = new PIXIPP.GraphicsGeometryPP(c1, c2);
+const gg = new GraphicsGeometryPP(c1, c2);
 
 const g = new PIXI.Graphics(gg);
 
 const emptyfillstyle = createFillStyle({ color: Color('gray') });
 const greylinestyle = createLineStyle({ width: 2, color: Color('grey') });
 
-const pole = new PIXI.Graphics((() => {
-	const ans = new PIXI.GraphicsGeometry();
-	const { width, height } = app.screen;
+const { width, height } = app.screen;
 
-	console.log({ width, height });
-
-	ans.graphicsData = Array(8).fill(0).map((_, i) => new PIXI.GraphicsData(
+const pole = new PIXI.Graphics(new GraphicsGeometryPP(
+	...Array(8).fill(0).map((_, i) => new PIXI.GraphicsData(
 		new PIXI.Polygon([
 			{ x: i * 100, y: 0 },
 			{ x: i * 100, y: width },
 		]),
 		emptyfillstyle,
 		greylinestyle,
-	));
-	ans.graphicsData.push(...Array(8).fill(0).map((_, i) => new PIXI.GraphicsData(
+	)),
+	...Array(8).fill(0).map((_, i) => new PIXI.GraphicsData(
 		new PIXI.Polygon([
 			{ y: i * 100, x: 0 },
 			{ y: i * 100, x: height },
 		]),
 		emptyfillstyle,
 		greylinestyle,
-	)));
+	)),
+));
 
-	return ans;
-})());
+// gmask.drawPolygon(p);
+// g.arc(600, 600, 100, Math.PI / 2, Math.PI);
+// gmask.drawPolygon(p.map((e) => 800 - e));
+// gmask.endFill();
+
+// const gmaskmask = new PIXI.Graphics();
+// gmaskmask.beginFill(Color('magenta'));
+// gmaskmask.drawPolygon([
+// 	// [0, 0], [800, 0], [800, 800], [0, 800],
+// 	// [0, 400], [300, 400],
+// 	// [300, 300], [500, 300], [500, 500], [300, 500],
+// 	// [300, 400],
+// ].flat());
+// gmaskmask.endFill();
+
+// gmask.mask = gmaskmask;
+
+// gmask.mask
+// g.mask = gmask;
+
+// const rectAndHole = new PIXI.Graphics();
+
+// rectAndHole.beginFill(0x00FF00);
+// rectAndHole.lineStyle({ width: 2, color: Color('black') });
+// rectAndHole.drawRect(350, 350, 150, 150);
+// rectAndHole.endFill();
+// rectAndHole.beginHole();
+// rectAndHole.drawCircle(375, 375, 25);
+// rectAndHole.drawCircle(425, 425, 25);
+// rectAndHole.drawCircle(475, 475, 25);
+// rectAndHole.endHole();
+// g.mask = rectAndHole;
 
 app.stage.addChild(pole, g);
 
@@ -76,7 +104,6 @@ console.log(
 	],
 );
 
-const { width, height } = app.screen;
 g.position.copyFrom({ x: width / 2, y: height / 2 });
 
 console.log(
@@ -129,3 +156,33 @@ g.on('click', () => {
 	console.log('click', { status, x: g.pivot.x });
 	console.log(g.children, g.geometry);
 });
+
+const sc = new PIXI.GraphicsData(
+	new PIXI.Circle(-20, 0, 10),
+	createFillStyle({ color: Color('red'), alpha: 0.5 }),
+	createLineStyle({
+		color: Color('black'), width: 1, alpha: 1,
+	}),
+);
+
+const mc = new PIXI.GraphicsData(
+	new PIXI.Circle(10, 0, 20),
+	createFillStyle({ color: Color('green'), alpha: 0.5 }),
+	createLineStyle({
+		color: Color('black'), width: 1, alpha: 1,
+	}),
+);
+
+const lc = new PIXI.GraphicsData(
+	new PIXI.Circle(0, 0, 30),
+	createFillStyle({ color: Color('green'), alpha: 0.5 }),
+	createLineStyle({
+		color: Color('black'), width: 1, alpha: 1,
+	}),
+);
+
+// mc.holes = [sc];
+lc.holes = [mc, sc];
+const ggggg = new PIXI.Graphics(new GraphicsGeometryPP(lc));
+ggggg.position.copyFrom({ x: 100, y: 100 });
+app.stage.addChild(ggggg, new PIXI.Graphics(new GraphicsGeometryPP(sc)));

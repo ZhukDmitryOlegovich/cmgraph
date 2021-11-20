@@ -33,7 +33,7 @@ export class SimpleFraction {
 			len >= 0
 				? new SimpleFraction(BigInt(first + second) * 10n ** BigInt(len))
 				: new SimpleFraction(BigInt(first + second), 10n ** BigInt(-len))
-		).normalize;
+		).simplification;
 	}
 
 	static numerator(f: SimpleFraction) { return f.numerator; }
@@ -111,13 +111,13 @@ export class SimpleFraction {
 		return new SimpleFraction(this.denominator, this.numerator);
 	}
 
-	get normalize() {
+	get simplification() {
 		let gcd = this.numerator;
 		let d = this.denominator;
 		while (d) [gcd, d] = [d, gcd % d];
 
 		if (this.numerator % gcd || this.denominator % gcd) {
-			throw new Error('SimpleFraction.normalize: gcd-fail');
+			throw new Error('SimpleFraction.simplification: gcd-fail');
 		}
 
 		return new SimpleFraction(this.numerator / gcd, this.denominator / gcd);

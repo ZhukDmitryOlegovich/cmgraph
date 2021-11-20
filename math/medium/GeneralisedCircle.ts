@@ -8,8 +8,9 @@ interface OperationDLO {
 }
 
 export class LineThroughZero implements OperationDLO {
-	// eslint-disable-next-line no-useless-constructor
-	constructor(public readonly c: SimpleComplex) { /* */ }
+	constructor(public readonly c: SimpleComplex) {
+		this.c = this.c.simplification;
+	}
 
 	eq(lts: any): boolean {
 		return lts instanceof LineThroughZero && this.c.сollinearity(lts.c);
@@ -34,8 +35,9 @@ export class LineThroughZero implements OperationDLO {
 }
 
 export class NonZeroLine implements OperationDLO {
-	// eslint-disable-next-line no-useless-constructor, no-empty-function
-	constructor(public readonly c: SimpleComplex) {}
+	constructor(public readonly c: SimpleComplex) {
+		this.c = this.c.simplification;
+	}
 
 	eq(nzl: any): boolean {
 		return nzl instanceof NonZeroLine && this.c.eq(nzl.c);
@@ -61,8 +63,10 @@ export class NonZeroLine implements OperationDLO {
 }
 
 export class Circle implements OperationDLO {
-	// eslint-disable-next-line no-useless-constructor, no-empty-function
-	constructor(public readonly c: SimpleComplex, public readonly r2: SimpleFraction) {}
+	constructor(public readonly c: SimpleComplex, public readonly r2: SimpleFraction) {
+		this.c = this.c.simplification;
+		this.r2 = this.r2.simplification;
+	}
 
 	eq(c: any): boolean {
 		return c instanceof Circle && this.c.eq(c.c) && this.r2.eq(c.r2);

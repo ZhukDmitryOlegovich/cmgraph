@@ -87,7 +87,7 @@ export class SimpleComplex {
 	}
 
 	get inverse(): SimpleComplex {
-		const { sqrlength: { normalize } } = this;
+		const { sqrlength: { simplification: normalize } } = this;
 		return new SimpleComplex(
 			this.realpart.div(normalize),
 			this.imagpart.mul(-1n).div(normalize),
@@ -103,12 +103,18 @@ export class SimpleComplex {
 		return this.realpart.mul(realpart).add(this.imagpart.mul(imagpart));
 	}
 
-	projection({ normalize }: SimpleComplex): SimpleComplex {
-		return this.mul(this.scalar(normalize));
+	projection(other: SimpleComplex): SimpleComplex {
+		// return this.mul(this.normalize.scalar(normalize)).simplification;
+		return other.mul(this.scalar(other)).div(other.sqrlength).simplification;
 	}
 
 	get normalize(): SimpleComplex {
-		return this.div(this.length);
+		const { length } = this;
+		return this.div(length.eq(0n) ? 1n : length).simplification;
+	}
+
+	get simplification() {
+		return new SimpleComplex(this.realpart.simplification, this.imagpart.simplification);
 	}
 
 	сollinearity({ realpart, imagpart }: SimpleComplex): boolean {

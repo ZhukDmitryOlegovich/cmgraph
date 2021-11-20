@@ -1,6 +1,7 @@
 import PIXI from 'pixi.js';
 
-class GraphicsGeometryPP extends PIXI.GraphicsGeometry {
+// eslint-disable-next-line import/prefer-default-export
+export class GraphicsGeometryPP extends PIXI.GraphicsGeometry {
 	constructor(...graphicsData: PIXI.GraphicsData[]) {
 		super();
 		this.graphicsData = graphicsData;
@@ -11,5 +12,3 @@ class GraphicsGeometryPP extends PIXI.GraphicsGeometry {
 	 */
 	rerender() { this.invalidate(); }
 }
-
-export default { GraphicsGeometryPP };

@@ -1,13 +1,15 @@
+/* eslint-env browser */
 import PIXI from 'pixi.js';
 
 import {
 	Circle, SimpleComplex, SimpleFraction,
 } from '@/math';
 
+import { AnimationControl } from './AnimationControl';
+import { Action, ActionType } from './AnimationFrame';
 import { Color } from './color';
 import { createFillStyle, createLineStyle } from './create';
-import { AnimCircle } from './math';
-import PIXIPP from './pixipp';
+import { GraphicsGeometryPP } from './pixipp';
 
 // eslint-disable-next-line no-undef
 declare const document: Document;
@@ -16,14 +18,15 @@ const app = new PIXI.Application({
 	antialias: true, backgroundColor: 0xFFFFFF, width: 800, height: 800,
 });
 
-document.body.appendChild(app.view);
+document.getElementById('draw-container')?.appendChild(app.view);
+// document.body.appendChild(app.view);
 
 const { width, height } = app.screen;
 const emptyfillstyle = createFillStyle({ color: Color('gray') });
 const greylinestyle = createLineStyle({ width: 1, color: Color('gray') });
 const blacklinestyle = createLineStyle({ width: 1, color: Color('black'), alpha: 1 });
 
-const pole = new PIXI.Graphics(new PIXIPP.GraphicsGeometryPP(
+const pole = new PIXI.Graphics(new GraphicsGeometryPP(
 	...Array(8).fill(0).map((_, i) => new PIXI.GraphicsData(
 		new PIXI.Polygon([
 			{ x: i * 100, y: 0 },
@@ -60,80 +63,99 @@ const pole = new PIXI.Graphics(new PIXIPP.GraphicsGeometryPP(
 
 app.stage.addChild(pole);
 
+const Complex = (
+	a: bigint,
+	b: bigint | null,
+	c: bigint,
+	d: bigint | null,
+) => new SimpleComplex(
+	new SimpleFraction(a, b ?? undefined), new SimpleFraction(c, d ?? undefined),
+);
+
 const c1 = new Circle(
-	new SimpleComplex(new SimpleFraction(1n), new SimpleFraction(0n)),
+	Complex(0n, null, 0n, null),
 	new SimpleFraction(1n),
 );
 
-const gd1 = new PIXI.GraphicsData(
-	new PIXI.Circle(
-		...SimpleComplex.value(c1.c).map((e, i) => (i === 0 ? 1 : -1) * e.valueOf() * 100),
-		Math.sqrt(c1.r2.valueOf()) * 100,
-	),
-	createFillStyle({ color: Color('magenta'), alpha: 0.5 }),
-	createLineStyle({ width: 2, color: Color('black') }),
+const ac = new AnimationControl(
+	app, c1,
+	[
+		// ['move', Complex(2n, null, 0n, null)],
+		// ['rotateAndScale', Complex(0n, null, 1n, null)],
+		// ['move', Complex(0n, null, -1n, null)],
+		// ['inverse'],
+		// ['rotateAndScale', Complex(0n, null, 1n, null)],
+		// ['move', Complex(-1n, 2n, 0n, null)],
+		// ['rotateAndScale', Complex(3n, null, 1n, null)],
+		// ['inverse'],
+		// ['move', Complex(0n, null, -1n, null)],
+		// ['inverse'],
+		// ['inverse'],
+	],
 );
+ac.state = 0;
 
-const gg = new PIXIPP.GraphicsGeometryPP(gd1);
-const fig = new PIXI.Graphics(gg);
-fig.position.copyFrom({ x: width / 2, y: height / 2 });
+// const left = document.getElementById('left') as HTMLButtonElement;
+const stopStart = document.getElementById('stop-start') as HTMLButtonElement;
+const speedButton = document.getElementById('speed') as HTMLInputElement;
+// const right = document.getElementById('right') as HTMLButtonElement;
 
-app.stage.addChild(fig);
+let speed = 0;
+let isStart = false;
 
-const speed = 1 * 60 * 1000;
-let time = 0;
-
-const anim1 = (delay: number) => {
-	time += delay * 1000;
-	if (time > speed) time = speed;
-	gd1.shape = AnimCircle.move(
-		c1, new SimpleComplex(new SimpleFraction(1n), new SimpleFraction(1n)), speed,
-	)(Math.round(time));
-
-	gg.rerender();
-
-	if (time === speed) {
-		time = 0;
-		console.timeEnd('anim1');
-		app.ticker.remove(anim1);
-		if (right) right.disabled = false;
-		if (left) left.disabled = false;
+const ivent = (delay: number) => {
+	const nextState = ac.lastState + speed * delay / (60 * 1 / 1);
+	if (nextState < 0) {
+		ac.state = 0;
+	} else if (nextState >= ac.maxState) {
+		ac.state = ac.maxState - 1e-10;
+	} else {
+		// console.log({ nextState });
+		ac.state = nextState;
 	}
 };
 
-const anim2 = (delay: number) => {
-	time += delay * 1000;
-	if (time > speed) time = speed;
-	gd1.shape = AnimCircle.move(
-		c1, new SimpleComplex(new SimpleFraction(1n), new SimpleFraction(1n)), speed,
-	)(speed - Math.round(time));
+stopStart.addEventListener('click', (e) => {
+	isStart = !isStart;
+	console.log('click', { isStart });
+	app.ticker[isStart ? 'add' : 'remove'](ivent);
+});
 
-	gg.rerender();
+speedButton.addEventListener('input', (e) => {
+	speed = Number(speedButton.value);
+});
+speed = Number(speedButton.value);
 
-	if (time === speed) {
-		time = 0;
-		console.timeEnd('anim2');
-		app.ticker.remove(anim2);
-		if (right) right.disabled = false;
-		if (left) left.disabled = false;
-	}
+const tranzit = document.getElementById('tranzit')!;
+
+const templateBlock = document
+	.createElement('template')
+	.appendChild(tranzit.firstElementChild!) as HTMLElement;
+templateBlock.style.display = 'block';
+
+const tranzitAdd = tranzit.getElementsByClassName('add-element')[0] as HTMLButtonElement;
+
+const addActionBlock = () => {
+	tranzitAdd.before(templateBlock.cloneNode(true));
 };
 
-// eslint-disable-next-line no-undef
-const right = document.getElementById('right') as HTMLButtonElement | null;
-// eslint-disable-next-line no-undef
-const left = document.getElementById('left') as HTMLButtonElement | null;
+const refreshAnimationControl = () => {
+	ac.setActions(
+		[...tranzit.getElementsByClassName('block-info')]
+			.map((e) => ({
+				select: e.getElementsByTagName('select')[0].value as ActionType,
+				input: new SimpleComplex(...(
+				[...e.getElementsByTagName('input')]
+					.map(
+						({ value }) => SimpleFraction.fromNumber(+value),
+					) as [SimpleFraction, SimpleFraction])),
+			}))
+			.map(({ select, input }): Action => (select === 'inverse' ? ['inverse'] : [select, input])),
+	);
 
-right?.addEventListener('click', (e) => {
-	console.time('anim1');
-	app.ticker.add(anim1);
-	right.disabled = true;
-	if (left) left.disabled = true;
-});
+	// console.log(d, tranzit.getElementsByClassName('block-info'), tranzit);
+};
 
-left?.addEventListener('click', (e) => {
-	console.time('anim2');
-	app.ticker.add(anim2);
-	if (right) right.disabled = true;
-	left.disabled = true;
-});
+tranzitAdd.addEventListener('click', addActionBlock);
+
+document.getElementById('refresh')!.addEventListener('click', refreshAnimationControl);

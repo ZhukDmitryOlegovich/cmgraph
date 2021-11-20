@@ -27,7 +27,7 @@ files.then(
 			}
 
 			console.log(chalk.gray('===>'), 'writing to', chalk.blue.bold(path.relative(build, filepath)));
-			
+
 			let newData = data.replace(
 				/((?:import|export) .* from\s+['"])(.*)(['"];?)/g,
 				/**
@@ -57,13 +57,13 @@ files.then(
 							newName = './' + newName;
 						}
 
-						console.log(
-							chalk.magenta.bold('[['),
-							chalk.grey(name),
-							chalk.magenta.bold('=>'),
-							chalk.grey(newName),
-							chalk.magenta.bold(']]'),
-						);
+						console.log(chalk.magenta(
+							chalk.bold('[['),
+							name,
+							chalk.bold('=>'),
+							newName,
+							chalk.bold(']]'),
+						));
 
 						name = newName;
 					}

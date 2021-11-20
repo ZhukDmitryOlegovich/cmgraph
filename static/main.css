@@ -1,0 +1,77 @@
+:root {
+	--draw-container-border-width: 2px;
+	--add-element-margin: 4px;
+	--draw-container-height: 800px;
+
+	--figures-height-delta: calc(100px + var(--draw-container-border-width));
+}
+
+.wrap-row {
+	display: flex;
+	flex-flow: row nowrap;
+}
+
+tt {
+	font-family: "Lucida Console", "Menlo", "Monaco", "Courier New", monospace;
+}
+
+.add-element {
+	margin: var(--add-element-margin);
+	width: calc(100% - 2 * var(--add-element-margin));
+	cursor: pointer;
+}
+
+.delete-element {
+	position: absolute; 
+	right: 10px; 
+	zoom: 0.8;
+	cursor: pointer;
+}
+
+.delete-element:hover {
+	background-color: rgb(255, 0, 0);
+}
+
+.right-bar {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	user-select: none;
+}
+
+.application {
+	height: calc(var(--draw-container-height) + 2 * var(--draw-container-border-width));
+}
+
+#draw-container {
+	border: var(--draw-container-border-width) solid black;
+	width: 800px;
+	height: var(--draw-container-height);
+}
+
+.block-info {
+	margin: 4px;
+	padding: 4px 10px;
+	border-radius: 2px;
+	background-color: white;
+	width: calc(238px - 2 * 10px);
+	position: relative;
+}
+
+#figures > .block-info[data-chosen]:not([data-chosen='Circle']) > .need-disabled {
+	display: none;
+}
+
+#tranzit > .block-info[data-chosen='inverse'] > .need-disabled {
+	display: none;
+}
+
+#figures {
+	flex: 0 1 auto;
+	background-color: #ff00001c;
+	overflow-y: scroll;
+	height: 25%;
+	min-height: var(--figures-height-delta);
+	max-height: calc(100% - var(--figures-height-delta));
+	resize: vertical;
+}
