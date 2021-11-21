@@ -2,7 +2,7 @@
 import PIXI from 'pixi.js';
 
 import {
-	Circle, SimpleComplex, SimpleFraction,
+	Circle, GeneralisedCircle, LineThroughZero, NonZeroLine, SimpleComplex, SimpleFraction,
 } from '@/math';
 
 import { AnimationControl } from './AnimationControl';
@@ -63,22 +63,25 @@ const pole = new PIXI.Graphics(new GraphicsGeometryPP(
 
 app.stage.addChild(pole);
 
-const Complex = (
-	a: bigint,
-	b: bigint | null,
-	c: bigint,
-	d: bigint | null,
-) => new SimpleComplex(
-	new SimpleFraction(a, b ?? undefined), new SimpleFraction(c, d ?? undefined),
-);
+// const Complex = (
+// 	a: bigint,
+// 	b: bigint | null,
+// 	c: bigint,
+// 	d: bigint | null,
+// ) => new SimpleComplex(
+// 	new SimpleFraction(a, b ?? undefined), new SimpleFraction(c, d ?? undefined),
+// );
 
-const c1 = new Circle(
-	Complex(0n, null, 0n, null),
-	new SimpleFraction(1n),
-);
+// const c1 = new Circle(
+// 	Complex(0n, null, 0n, null),
+// 	new SimpleFraction(1n),
+// );
 
 const ac = new AnimationControl(
-	app, c1,
+	app,
+	[
+		// c1
+	],
 	[
 		// ['move', Complex(2n, null, 0n, null)],
 		// ['rotateAndScale', Complex(0n, null, 1n, null)],
@@ -107,8 +110,8 @@ const ivent = (delay: number) => {
 	const nextState = ac.lastState + speed * delay / (60 * 1 / 1);
 	if (nextState < 0) {
 		ac.state = 0;
-	} else if (nextState >= ac.maxState) {
-		ac.state = ac.maxState - 1e-10;
+	} else if (nextState > ac.maxState) {
+		ac.state = ac.maxState;
 	} else {
 		// console.log({ nextState });
 		ac.state = nextState;
@@ -126,21 +129,51 @@ speedButton.addEventListener('input', (e) => {
 });
 speed = Number(speedButton.value);
 
+const figures = document.getElementById('figures')!;
+
+const templateFiguresBlock = document
+	.createElement('template')
+	.appendChild(figures.firstElementChild!) as HTMLElement;
+
+templateFiguresBlock.style.display = 'block';
+
+const figuresAdd = figures.getElementsByClassName('add-element')[0] as HTMLButtonElement;
+
+figuresAdd.addEventListener('click', () => { figuresAdd.before(templateFiguresBlock.cloneNode(true)); });
+
 const tranzit = document.getElementById('tranzit')!;
 
-const templateBlock = document
+const templateTranzitBlock = document
 	.createElement('template')
 	.appendChild(tranzit.firstElementChild!) as HTMLElement;
-templateBlock.style.display = 'block';
+
+templateTranzitBlock.style.display = 'block';
 
 const tranzitAdd = tranzit.getElementsByClassName('add-element')[0] as HTMLButtonElement;
 
-const addActionBlock = () => {
-	tranzitAdd.before(templateBlock.cloneNode(true));
-};
+tranzitAdd.addEventListener('click', () => { tranzitAdd.before(templateTranzitBlock.cloneNode(true)); });
+
+const GC = {
+	Circle,
+	NonZeroLine,
+	LineThroughZero,
+} as const;
 
 const refreshAnimationControl = () => {
-	ac.setActions(
+	ac.setData(
+		[...figures.getElementsByClassName('block-info')]
+			.map((e) => ({
+				select: e.getElementsByTagName('select')[0].value as keyof typeof GC,
+				input: [...e.getElementsByTagName('input')].map(({ value }) => +value),
+			}))
+			.map(({ select, input: [cr, ci, r] }): GeneralisedCircle => (select === 'Circle'
+				? new Circle(
+					new SimpleComplex(SimpleFraction.fromNumber(cr), SimpleFraction.fromNumber(ci)),
+					SimpleFraction.fromNumber(r * r),
+				)
+				: new GC[select](
+					new SimpleComplex(SimpleFraction.fromNumber(cr), SimpleFraction.fromNumber(ci)),
+				))),
 		[...tranzit.getElementsByClassName('block-info')]
 			.map((e) => ({
 				select: e.getElementsByTagName('select')[0].value as ActionType,
@@ -156,6 +189,5 @@ const refreshAnimationControl = () => {
 	// console.log(d, tranzit.getElementsByClassName('block-info'), tranzit);
 };
 
-tranzitAdd.addEventListener('click', addActionBlock);
-
 document.getElementById('refresh')!.addEventListener('click', refreshAnimationControl);
+refreshAnimationControl();

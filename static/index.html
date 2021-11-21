@@ -30,7 +30,8 @@
 		<div id="draw-container"></div>
 		<div class="right-bar">
 			<div id="figures">
-				<div class="block-info" data-chosen="Circle">
+				<div class="block-info" data-chosen="Circle" style="display: none;">
+					<button class="delete-element" onclick="this.parentNode.remove()">x</button>
 					<p>
 						Тип:<select onchange="this.parentNode.parentNode.dataset.chosen = this.value;">
 							<option selected value="Circle" >Circle</option>
@@ -38,13 +39,11 @@
 							<option value="LineThroughZero">LineThroughZero</option>
 						</select>
 					</p>
-					<p><tt>x</tt> := <input type="number" placeholder="0" style="width: 5em;">
-						+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
-					<p><tt>y</tt> := <input type="number" placeholder="0" style="width: 5em;">
+					<p><tt>c</tt> := <input type="number" placeholder="0" style="width: 5em;">
 						+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
 					<p class="need-disabled"><tt>r</tt> := <input type="number" placeholder="0" value="1" style="width: 5em;">
 				</div>
-				<!-- <button class="add-element">+</button> -->
+				<button class="add-element">+</button>
 			</div>
 			<div id="tranzit" style="flex: 1 1 auto; background-color: #00ff151c; overflow-y: scroll;">
 				<div class="block-info" data-chosen="move" style="display: none;">

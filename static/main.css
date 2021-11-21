@@ -37,6 +37,7 @@ tt {
 	display: flex;
 	flex-direction: column;
 	user-select: none;
+	width: 263px; /* todo: wtf ? */
 }
 
 .application {

@@ -6,7 +6,7 @@ import { Action, AnimationFrame } from './AnimationFrame';
 
 // eslint-disable-next-line import/prefer-default-export
 export class AnimationControl {
-	private OKS: GeneralisedCircle[];
+	private OKSS: GeneralisedCircle[][];
 
 	private animFrames: AnimationFrame[];
 
@@ -16,15 +16,15 @@ export class AnimationControl {
 
 	constructor(
 		private app: PIXI.Application,
-		private OK: GeneralisedCircle,
+		private OKS: GeneralisedCircle[],
 		private actions: Action[],
 	) {
-		this.OKS = [OK];
+		this.OKSS = [this.OKS];
 		this.animFrames = actions
 			.concat([['move', new SimpleComplex(new SimpleFraction(0n))]])
 			.map((action) => {
-				const animFrame = new AnimationFrame(app, this.OKS[this.OKS.length - 1], action);
-				this.OKS.push(animFrame.to);
+				const animFrame = new AnimationFrame(app, this.OKSS[this.OKSS.length - 1], action);
+				this.OKSS.push(animFrame.tos);
 				return animFrame;
 			});
 		console.log(this);
@@ -32,15 +32,15 @@ export class AnimationControl {
 
 	getActions() { return this.actions; }
 
-	setActions(newActions = this.actions) {
-		const newAC = new AnimationControl(this.app, this.OK, newActions);
+	setData(newOKS = this.OKS, newActions = this.actions) {
+		const newAC = new AnimationControl(this.app, newOKS, newActions);
 		this.OKS = newAC.OKS;
 		this.animFrames = newAC.animFrames;
 		this.activeAnimFrame?.stop();
 		this.activeAnimFrame = undefined;
 		this.lastState = newAC.lastState;
 		this.app = newAC.app;
-		this.OK = newAC.OK;
+		this.OKS = newAC.OKS;
 		this.actions = newAC.actions;
 		this.state = this.lastState;
 	}
