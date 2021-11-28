@@ -4,7 +4,7 @@ const chalk = require('chalk');
 const FileHound = require('filehound');
 const fs = require('fs');
 const path = require('path');
-const { build, paths } = require('./const');
+const { build, paths, root } = require('./const');
 
 const files = FileHound.create()
 	.paths(build)

@@ -166,10 +166,10 @@ const refreshAnimationControl = () => {
 				select: e.getElementsByTagName('select')[0].value as keyof typeof GC,
 				input: [...e.getElementsByTagName('input')].map(({ value }) => +value),
 			}))
-			.map(({ select, input: [cr, ci, r] }): GeneralisedCircle => (select === 'Circle'
+			.map(({ select, input: [cr, ci, r2] }): GeneralisedCircle => (select === 'Circle'
 				? new Circle(
 					new SimpleComplex(SimpleFraction.fromNumber(cr), SimpleFraction.fromNumber(ci)),
-					SimpleFraction.fromNumber(r * r),
+					SimpleFraction.fromNumber(r2),
 				)
 				: new GC[select](
 					new SimpleComplex(SimpleFraction.fromNumber(cr), SimpleFraction.fromNumber(ci)),

@@ -5,7 +5,8 @@
 	"scripts": {
 		"test": "npx ts-node ./math/test.ts",
 		"server": "npx node ./server/server.js",
-		"build": "rm -rf ./build && npx tsc && npx node ./server/afterbuild.js"
+		"build": "rm -rf ./build && npx tsc && npx node ./server/afterbuild.js",
+		"custom:build": "npx tsc; npx node ./server/afterbuild.js && cp -r ./node_modules/js-angusj-clipper/universal/wasm ./build/js-angusj-clipper/src/wasm && echo 'Замени module.export' && cat ./build/js-angusj-clipper/src/wasm/clipper.js | grep module.exports"
 	},
 	"author": "Zhuk Dmitry",
 	"license": "ISC",
@@ -24,6 +25,7 @@
 		"typescript": "^4.4.3"
 	},
 	"dependencies": {
+		"js-angusj-clipper": "^1.1.1",
 		"pixi.js": "^6.2.0"
 	}
 }

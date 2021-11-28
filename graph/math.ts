@@ -88,11 +88,11 @@ export const createNonZeroLine = (
 	zoom,
 );
 
-export const createGeneralisedCircle = (c: GeneralisedCircle) => (
+export const createGeneralisedCircle = (c: GeneralisedCircle, opt?: AppSizeOpt) => (
 	// eslint-disable-next-line no-nested-ternary
 	c instanceof Circle
 		? createCircle(c)
 		: c instanceof NonZeroLine
-			? createNonZeroLine(c)
-			: createLineThroughZero(c)
+			? createNonZeroLine(c, opt)
+			: createLineThroughZero(c, opt)
 );

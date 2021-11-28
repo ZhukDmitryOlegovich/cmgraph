@@ -7,7 +7,8 @@ import {
 import { Color } from './color';
 import { createFillStyle, createLineStyle } from './create';
 import {
-	createGeneralisedCircle, setCircle, setLine, setLineThroughZero, setNonZeroLine,
+	AppSizeOpt,
+	createGeneralisedCircle, setCircle, setLineThroughZero, setNonZeroLine,
 } from './math';
 import { GraphicsGeometryPP } from './pixipp';
 
@@ -30,11 +31,36 @@ export class AnimationFrame {
 	constructor(
 		private app: PIXI.Application,
 		froms: GeneralisedCircle[],
-		action: Action,
+		private action: Action,
 	) {
 		// console.log({ from, action });
 
 		const graphicsData: PIXI.GraphicsData[] = [];
+
+		const opt: AppSizeOpt | undefined = action[0] === 'move'
+			? ((): AppSizeOpt => {
+				const [moverealpart, moveimagpart] = SimpleComplex.value(action[1]);
+
+				const xm = moverealpart.valueOf() * 100;
+				const ym = moveimagpart.valueOf() * 100;
+
+				console.log({ xm, ym });
+
+				this.rerenderArr = [
+					(proc) => this.g.position.copyFrom({
+						x: 400 + xm * proc,
+						y: 400 - ym * proc,
+					}),
+				];
+
+				return {
+					left: -400 - Math.abs(xm),
+					right: 400 + Math.abs(xm),
+					top: 400 + Math.abs(ym),
+					bottom: -400 - Math.abs(ym),
+				};
+			})()
+			: undefined;
 
 		for (const from of froms) {
 			const to = action[0] === 'inverse' ? from[action[0]] : from[action[0]](action[1]);
@@ -43,17 +69,20 @@ export class AnimationFrame {
 			// console.log({ to: this.to, indes: AnimationFrame.index++ });
 
 			const gd = new PIXI.GraphicsData(
-				createGeneralisedCircle(from),
+				createGeneralisedCircle(from, opt),
 				createFillStyle({ color: Color('gray'), alpha: 0.25 }),
 				createLineStyle({ color: Color('black'), width: 2, alpha: 1 }),
 			);
 			graphicsData.push(gd);
 
-			// console.log(this.gd.shape);
+			if (action[0] === 'move') {
+				// eslint-disable-next-line no-continue
+				continue;
+			}
 
 			if (from instanceof Circle && gd.shape instanceof PIXI.Circle) {
 				const c = gd.shape;
-				if (action[0] === 'move' || action[0] === 'rotateAndScale' || (action[0] === 'inverse' && to instanceof Circle)) {
+				if (action[0] === 'rotateAndScale' || (action[0] === 'inverse' && to instanceof Circle)) {
 					if (!(to instanceof Circle)) {
 						AnimationFrame.throwErrorConstructorReturnType();
 					}
@@ -69,7 +98,7 @@ export class AnimationFrame {
 					const y1 = toimagpart.valueOf();
 					const r1 = Math.sqrt(to.r2.valueOf());
 
-					if (action[0] === 'move' || action[0] === 'inverse') {
+					if (action[0] === 'inverse') {
 						this.rerenderArr.push((proc) => {
 							setCircle(
 								c,
@@ -153,33 +182,21 @@ export class AnimationFrame {
 				const x1 = torealpart.valueOf();
 				const y1 = toimagpart.valueOf();
 
-				if (action[0] === 'move') {
-					this.rerenderArr.push((proc) => {
-						setLine(
-							c,
-							x0 + (x1 - x0) * proc,
-							y0 + (y1 - y0) * proc,
-							x0,
-							y0,
-						);
-					});
-				} else {
-					const a0 = Math.atan2(y0, x0);
-					const b0 = Math.sqrt(x0 ** 2 + y0 ** 2);
-					const a1 = Math.atan2(y1, x1);
-					const b1 = Math.sqrt(x1 ** 2 + y1 ** 2);
+				const a0 = Math.atan2(y0, x0);
+				const b0 = Math.sqrt(x0 ** 2 + y0 ** 2);
+				const a1 = Math.atan2(y1, x1);
+				const b1 = Math.sqrt(x1 ** 2 + y1 ** 2);
 
-					this.rerenderArr.push((proc) => {
-						const bp = b0 + (b1 - b0) * proc;
-						const ap = a0 + (a1 - a0) * proc;
+				this.rerenderArr.push((proc) => {
+					const bp = b0 + (b1 - b0) * proc;
+					const ap = a0 + (a1 - a0) * proc;
 
-						setNonZeroLine(
-							c,
-							bp * Math.cos(ap),
-							bp * Math.sin(ap),
-						);
-					});
-				}
+					setNonZeroLine(
+						c,
+						bp * Math.cos(ap),
+						bp * Math.sin(ap),
+					);
+				});
 			} else if (from instanceof LineThroughZero && gd.shape instanceof PIXI.Polygon) {
 				if (action[0] === 'inverse') {
 					const donor = new AnimationFrame(app, [from], ['rotateAndScale', to.c.div(from.c)]);
@@ -199,33 +216,21 @@ export class AnimationFrame {
 				const x1 = torealpart.valueOf();
 				const y1 = toimagpart.valueOf();
 
-				if (action[0] === 'move') {
-					this.rerenderArr.push((proc) => {
-						setLine(
-							c,
-							x1 * proc,
-							y1 * proc,
-							x0,
-							y0,
-						);
-					});
-				} else {
-					const a0 = Math.atan2(y0, x0);
-					const b0 = Math.sqrt(x0 ** 2 + y0 ** 2);
-					const a1 = Math.atan2(y1, x1);
-					const b1 = Math.sqrt(x1 ** 2 + y1 ** 2);
+				const a0 = Math.atan2(y0, x0);
+				const b0 = Math.sqrt(x0 ** 2 + y0 ** 2);
+				const a1 = Math.atan2(y1, x1);
+				const b1 = Math.sqrt(x1 ** 2 + y1 ** 2);
 
-					this.rerenderArr.push((proc) => {
-						const bp = b0 + (b1 - b0) * proc;
-						const ap = a0 + (a1 - a0) * proc;
+				this.rerenderArr.push((proc) => {
+					const bp = b0 + (b1 - b0) * proc;
+					const ap = a0 + (a1 - a0) * proc;
 
-						setLineThroughZero(
-							c,
-							bp * Math.cos(ap),
-							bp * Math.sin(ap),
-						);
-					});
-				}
+					setLineThroughZero(
+						c,
+						bp * Math.cos(ap),
+						bp * Math.sin(ap),
+					);
+				});
 			} else {
 				console.warn(this, { from, action });
 
@@ -245,7 +250,9 @@ export class AnimationFrame {
 
 		this.rerenderArr.forEach((r) => { r(proc); });
 
-		this.gg.rerender();
+		if (this.action[0] !== 'move') {
+			this.gg.rerender();
+		}
 	}
 
 	static checkProcAndThrowError(proc: number) {

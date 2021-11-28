@@ -34,14 +34,15 @@
 					<button class="delete-element" onclick="this.parentNode.remove()">x</button>
 					<p>
 						Тип:<select onchange="this.parentNode.parentNode.dataset.chosen = this.value;">
-							<option selected value="Circle" >Circle</option>
+							<option selected value="Circle">Circle</option>
 							<option value="NonZeroLine">NonZeroLine</option>
 							<option value="LineThroughZero">LineThroughZero</option>
 						</select>
 					</p>
 					<p><tt>c</tt> := <input type="number" placeholder="0" style="width: 5em;">
 						+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
-					<p class="need-disabled"><tt>r</tt> := <input type="number" placeholder="0" value="1" style="width: 5em;">
+					<p class="need-disabled"><tt>r</tt> := <input type="number" placeholder="0" value="1"
+							style="width: 5em;">
 				</div>
 				<button class="add-element">+</button>
 			</div>
@@ -65,6 +66,7 @@
 	<!-- <script type="module" src="/math/test.js"></script> -->
 	<script src="https://pixijs.download/release/pixi.min.js"></script>
 	<!-- <script type="module" src="/graph/test.js"></script> -->
+	<script type="module" src="/graph/test2.js"></script>
 	<script type="module" src="/graph/index.js"></script>
 	<script type="module">
 		console.log(11);
