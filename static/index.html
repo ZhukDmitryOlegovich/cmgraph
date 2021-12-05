@@ -13,11 +13,18 @@
 	<table>
 		<tr>
 			<th>
-				<p>Положение: <input id="range" type="range" min="-200" max="200" step="1" value="100"></p>
-				<p>Скорость: <input id="speed" type="range" min="-1" max="1" step="0.025" value="0.5"></p>
+
+				<!-- <p>Положение: <input id="range" type="range" min="-200" max="200" step="1" value="100"></p> -->
+				<p>Скорость:
+					<span style="min-width: 50px; display: inline-block;">0.50</span>
+					<input id="speed" type="range" min="-1" max="1" step="0.05" value="0.5"
+						oninput="this.parentNode.children[0].innerText = (+this.value).toFixed(2);"
+						onchange="this.parentNode.children[0].innerText = (+this.value).toFixed(2);">
+				</p>
 			</th>
 			<th>
 				<p>Состояние:
+					<span id="status" style="min-width: 50px; display: inline-block;">0.00</span>
 					<button id="left"> &#x23F4; </button>
 					<button id="stop-start"> &#x23EF; </button>
 					<button id="right"> &#x23F5; </button>
@@ -32,7 +39,7 @@
 			<div id="figures">
 				<div class="block-info" data-chosen="Circle" style="display: none;">
 					<button class="delete-element" onclick="this.parentNode.remove()">x</button>
-					<p>
+					<p class="with-select">
 						Тип:<select onchange="this.parentNode.parentNode.dataset.chosen = this.value;">
 							<option selected value="Circle">Circle</option>
 							<option value="NonZeroLine">NonZeroLine</option>
@@ -41,25 +48,57 @@
 					</p>
 					<p><tt>c</tt> := <input type="number" placeholder="0" style="width: 5em;">
 						+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
-					<p class="need-disabled"><tt>r</tt> := <input type="number" placeholder="0" value="1"
+					<p class="need-disabled"><tt>r&#178;</tt> := <input type="number" placeholder="0" value="1"
 							style="width: 5em;">
 				</div>
 				<button class="add-element">+</button>
+				<div style="height: 100px;"></div>
 			</div>
-			<div id="tranzit" style="flex: 1 1 auto; background-color: #00ff151c; overflow-y: scroll;">
+			<div id="tranzit">
 				<div class="block-info" data-chosen="move" style="display: none;">
 					<button class="delete-element" onclick="this.parentNode.remove()">x</button>
-					<p>
+					<p class="with-select">
 						Тип:<select onchange="this.parentNode.parentNode.dataset.chosen = this.value;">
 							<option selected value="move">move</option>
 							<option value="inverse">inverse</option>
 							<option value="rotateAndScale">rotateAndScale</option>
+							<option value="Mobius">Möbius</option>
 						</select>
 					</p>
 					<p class="need-disabled"><tt>c</tt> := <input type="number" placeholder="0" style="width: 5em;">
 						+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
+					<div class="need-mobius">
+						<p class="need-disabled"><tt>a</tt> := <input type="number" placeholder="0" style="width: 5em;">
+							+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
+						<p class="need-disabled"><tt>b</tt> := <input type="number" placeholder="0" style="width: 5em;">
+							+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
+						<p class="need-disabled c"><tt>c</tt> := <input type="number" placeholder="0"
+								style="width: 5em;">
+							+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
+						<p class="need-disabled"><tt>d</tt> := <input type="number" placeholder="0" style="width: 5em;">
+							+ i * <input type="number" placeholder="0" style="width: 5em;"></p>
+						<div class="block-mobius-info move1">
+							<p>Тип: move</p>
+							<p class="need-disabled"><tt>c</tt> := <span class="left">0</span>
+								+ i * <span>0</span></p>
+						</div>
+						<div class="block-mobius-info inverse">
+							<p>Тип: inverse</p>
+						</div>
+						<div class="block-mobius-info rotateAndScale">
+							<p>Тип: rotateAndScale</p>
+							<p class="need-disabled"><tt>c</tt> := <span class="left">0</span>
+								+ i * <span>0</span></p>
+						</div>
+						<div class="block-mobius-info move2">
+							<p>Тип: move</p>
+							<p class="need-disabled"><tt>c</tt> := <span class="left">0</span>
+								+ i * <span>0</span></p>
+						</div>
+					</div>
 				</div>
 				<button class="add-element">+</button>
+				<div style="height: 100px;"></div>
 			</div>
 		</div>
 	</div>

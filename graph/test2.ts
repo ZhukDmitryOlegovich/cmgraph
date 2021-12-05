@@ -9,9 +9,9 @@ async function mainAsync() {
 	);
 
 	// create some polygons (note that they MUST be integer coordinates)
-	const poly1 = [{ x: 0, y: 0 }, { x: 15, y: 0 }, { x: 15, y: 10 }, { x: 0, y: 10 }];
+	const poly1 = [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 100, y: 100 }, { x: 0, y: 100 }];
 
-	const poly2 = [{ x: 10, y: 0 }, { x: 20, y: 0 }, { x: 20, y: 10 }, { x: 10, y: 10 }];
+	const poly2 = [{ x: 10, y: 10 }, { x: 20, y: 10 }, { x: 20, y: 20 }, { x: 10, y: 20 }];
 
 	// get their union
 	const polyIntersection = clipper.clipToPaths({

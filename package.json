@@ -5,8 +5,10 @@
 	"scripts": {
 		"test": "npx ts-node ./math/test.ts",
 		"server": "npx node ./server/server.js",
-		"build": "rm -rf ./build && npx tsc && npx node ./server/afterbuild.js",
-		"custom:build": "npx tsc; npx node ./server/afterbuild.js && cp -r ./node_modules/js-angusj-clipper/universal/wasm ./build/js-angusj-clipper/src/wasm && echo 'Замени module.export' && cat ./build/js-angusj-clipper/src/wasm/clipper.js | grep module.exports"
+		"start": "npm run server",
+		"old:build": "rm -rf ./build && npx tsc && npx node ./server/afterbuild.js",
+		"build": "npx tsc && npx node ./server/afterbuild.js && cp -r ./node_modules/js-angusj-clipper/universal/wasm ./build/js-angusj-clipper/src/wasm && echo 'Замени module.export' && cat ./build/js-angusj-clipper/src/wasm/clipper.js | grep module.exports",
+		"restart": "time npm run build"
 	},
 	"author": "Zhuk Dmitry",
 	"license": "ISC",

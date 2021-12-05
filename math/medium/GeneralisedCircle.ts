@@ -1,6 +1,6 @@
 import { SimpleComplex, SimpleFraction } from '@/math/simple';
 
-interface OperationDLO {
+export interface OperationDLO {
 	eq(c: any): boolean;
 	get inverse(): OperationDLO;
 	rotateAndScale(c: SimpleComplex): OperationDLO;

@@ -69,4 +69,6 @@ export class AnimationControl {
 		}
 		// console.log({ nowState, ind });
 	}
+
+	get state() { return this.lastState; }
 }

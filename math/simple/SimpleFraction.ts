@@ -56,6 +56,11 @@ export class SimpleFraction {
 		return this.denominator * numerator === this.numerator * denominator;
 	}
 
+	gt(value: SimpleFraction | BigIntPP | bigint): boolean {
+		const [numerator, denominator] = SimpleFraction.value(value);
+		return this.denominator * numerator > this.numerator * denominator;
+	}
+
 	valueOf(): number {
 		let { numerator: n } = this;
 		const { denominator: d } = this;

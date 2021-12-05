@@ -23,7 +23,7 @@ document.getElementById('draw-container')?.appendChild(app.view);
 
 const { width, height } = app.screen;
 const emptyfillstyle = createFillStyle({ color: Color('gray') });
-const greylinestyle = createLineStyle({ width: 1, color: Color('gray') });
+const greylinestyle = createLineStyle({ width: 1, color: Color('gray'), alpha: 1 });
 const blacklinestyle = createLineStyle({ width: 1, color: Color('black'), alpha: 1 });
 
 const pole = new PIXI.Graphics(new GraphicsGeometryPP(
@@ -103,8 +103,12 @@ const stopStart = document.getElementById('stop-start') as HTMLButtonElement;
 const speedButton = document.getElementById('speed') as HTMLInputElement;
 // const right = document.getElementById('right') as HTMLButtonElement;
 
+// stopStart.children
+
 let speed = 0;
 let isStart = false;
+
+const spanStatus = document.getElementById('status') as HTMLSpanElement;
 
 const ivent = (delay: number) => {
 	const nextState = ac.lastState + speed * delay / (60 * 1 / 1);
@@ -116,13 +120,16 @@ const ivent = (delay: number) => {
 		// console.log({ nextState });
 		ac.state = nextState;
 	}
+	spanStatus.innerHTML = ac.state.toFixed(2);
 };
 
 stopStart.addEventListener('click', (e) => {
 	isStart = !isStart;
 	console.log('click', { isStart });
 	app.ticker[isStart ? 'add' : 'remove'](ivent);
+	stopStart.innerHTML = isStart ? '&#9208;' : '&#9654;';
 });
+stopStart.innerHTML = isStart ? '&#9208;' : '&#9654;';
 
 speedButton.addEventListener('input', (e) => {
 	speed = Number(speedButton.value);
@@ -151,7 +158,49 @@ templateTranzitBlock.style.display = 'block';
 
 const tranzitAdd = tranzit.getElementsByClassName('add-element')[0] as HTMLButtonElement;
 
-tranzitAdd.addEventListener('click', () => { tranzitAdd.before(templateTranzitBlock.cloneNode(true)); });
+const SimpleComplexToStrings = (c: SimpleComplex): [string, string] => {
+	const [realpart, imagpart] = SimpleComplex.value(c);
+	return [`${+realpart}`, `${+imagpart}`];
+};
+
+tranzitAdd.addEventListener('click', () => {
+	tranzitAdd.before(templateTranzitBlock.cloneNode(true));
+
+	const newElem = tranzitAdd.previousElementSibling as HTMLDivElement;
+	const needMobius = newElem.querySelector('.need-mobius')!;
+	const pC = newElem.querySelector('p.c')!;
+	const allInputs = Array.from(
+		// eslint-disable-next-line no-undef
+		needMobius.getElementsByTagName('input') as HTMLCollectionOf<HTMLInputElement>,
+	);
+	const [ar, ai, br, bi, cr, ci, dr, di] = allInputs;
+	const [m1r, m1i, rr, ri, m2r, m2i] = Array.from(
+		// eslint-disable-next-line no-undef
+		needMobius.getElementsByTagName('span') as HTMLCollectionOf<HTMLSpanElement>,
+	);
+
+	const recalcArgs = () => {
+		const [a, b, c, d] = [[ar, ai], [br, bi], [cr, ci], [dr, di]]
+			.map(([{ value: realpart }, { value: imagpart }]) => new SimpleComplex(
+				SimpleFraction.fromNumber(+realpart), SimpleFraction.fromNumber(+imagpart),
+			));
+
+		if (c.eq(0n) || a.mul(d).eq(c.mul(b))) {
+			pC.classList.add('fail-mobius');
+			return;
+		}
+
+		pC.classList.remove('fail-mobius');
+
+		[m1r.innerText, m1i.innerText] = SimpleComplexToStrings(d.div(c));
+		[rr.innerText, ri.innerText] = SimpleComplexToStrings(b.mul(c).sub(a.mul(d)).div(c.mul(c)));
+		[m2r.innerText, m2i.innerText] = SimpleComplexToStrings(a.div(c));
+	};
+
+	console.log({ allInputs, needMobius, newElem }, [m1r, m1i, rr, ri, m2r, m2i]);
+
+	allInputs.forEach((input) => input.addEventListener('change', recalcArgs));
+});
 
 const GC = {
 	Circle,
@@ -161,7 +210,7 @@ const GC = {
 
 const refreshAnimationControl = () => {
 	ac.setData(
-		[...figures.getElementsByClassName('block-info')]
+		(Array.from(figures.getElementsByClassName('block-info')) as HTMLDivElement[])
 			.map((e) => ({
 				select: e.getElementsByTagName('select')[0].value as keyof typeof GC,
 				input: [...e.getElementsByTagName('input')].map(({ value }) => +value),
@@ -174,15 +223,50 @@ const refreshAnimationControl = () => {
 				: new GC[select](
 					new SimpleComplex(SimpleFraction.fromNumber(cr), SimpleFraction.fromNumber(ci)),
 				))),
-		[...tranzit.getElementsByClassName('block-info')]
-			.map((e) => ({
-				select: e.getElementsByTagName('select')[0].value as ActionType,
-				input: new SimpleComplex(...(
-				[...e.getElementsByTagName('input')]
-					.map(
-						({ value }) => SimpleFraction.fromNumber(+value),
-					) as [SimpleFraction, SimpleFraction])),
-			}))
+		(Array.from(tranzit.getElementsByClassName('block-info')) as HTMLDivElement[])
+			.flatMap((e): { select: ActionType; input: SimpleComplex; }
+				| { select: ActionType; input: SimpleComplex; }[] => {
+				const selectValue = e.getElementsByTagName('select')[0].value as ActionType | 'Mobius';
+				return selectValue === 'Mobius'
+					? [
+						{
+							select: 'move',
+							input: new SimpleComplex(...(
+								[...e.getElementsByClassName('move1')[0]?.getElementsByTagName('span')]
+									.map(
+										({ textContent }) => SimpleFraction
+											.fromNumber(+(textContent || '')),
+									) as [SimpleFraction, SimpleFraction])),
+						},
+						{ select: 'inverse', input: new SimpleComplex(new SimpleFraction(0n)) },
+						{
+							select: 'rotateAndScale',
+							input: new SimpleComplex(...(
+							[...e.getElementsByClassName('rotateAndScale')[0]?.getElementsByTagName('span')]
+								.map(
+									({ textContent }) => SimpleFraction
+										.fromNumber(+(textContent || '')),
+								) as [SimpleFraction, SimpleFraction])),
+						},
+						{
+							select: 'move',
+							input: new SimpleComplex(...(
+							[...e.getElementsByClassName('move2')[0]?.getElementsByTagName('span')]
+								.map(
+									({ textContent }) => SimpleFraction
+										.fromNumber(+(textContent || '')),
+								) as [SimpleFraction, SimpleFraction])),
+						},
+					]
+					: {
+						select: selectValue,
+						input: new SimpleComplex(...(
+							[...e.getElementsByTagName('input')]
+								.map(
+									({ value }) => SimpleFraction.fromNumber(+value),
+								) as [SimpleFraction, SimpleFraction])),
+					};
+			})
 			.map(({ select, input }): Action => (select === 'inverse' ? ['inverse'] : [select, input])),
 	);
 

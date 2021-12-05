@@ -22,8 +22,8 @@ tt {
 }
 
 .delete-element {
-	position: absolute; 
-	right: 10px; 
+	position: absolute;
+	right: 10px;
 	zoom: 0.8;
 	cursor: pointer;
 }
@@ -59,12 +59,16 @@ tt {
 	position: relative;
 }
 
-#figures > .block-info[data-chosen]:not([data-chosen='Circle']) > .need-disabled {
-	display: none;
+.block-mobius-info {
+	margin: 4px 0;
+	padding: 4px 4px;
+	background-color: #e4e4e4;
+	border-radius: 2px;
 }
 
-#tranzit > .block-info[data-chosen='inverse'] > .need-disabled {
-	display: none;
+.block-mobius-info .left {
+	min-width: 71px;
+	display: inline-block;
 }
 
 #figures {
@@ -75,4 +79,35 @@ tt {
 	min-height: var(--figures-height-delta);
 	max-height: calc(100% - var(--figures-height-delta));
 	resize: vertical;
+}
+
+#tranzit {
+	flex: 1 1000 auto;
+	background-color: #00ff151c;
+	overflow-y: scroll;
+}
+
+#figures > .block-info[data-chosen]:not([data-chosen='Circle']) > .need-disabled {
+	display: none;
+}
+
+.fail-mobius {
+	background-color: #ff5e5e;
+	border-radius: 4px;
+}
+
+.fail-mobius > input {
+	background-color: #ff5e5e;
+}
+
+#tranzit > .block-info[data-chosen='inverse'] > .need-disabled {
+	display: none;
+}
+
+#tranzit > .block-info[data-chosen]:not([data-chosen='Mobius']) > .need-mobius {
+	display: none;
+}
+
+#tranzit > .block-info[data-chosen='Mobius'] > p:not(.with-select, .need-mobius) {
+	display: none;
 }
