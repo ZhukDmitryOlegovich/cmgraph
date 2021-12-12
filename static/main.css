@@ -111,3 +111,15 @@ tt {
 #tranzit > .block-info[data-chosen='Mobius'] > p:not(.with-select, .need-mobius) {
 	display: none;
 }
+
+#left, #right, #stop-start, #refresh {
+    width: 35px;
+}
+
+#refresh {
+    margin: 2px;
+}
+
+table {
+	margin: 2px 10px;
+}

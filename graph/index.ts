@@ -98,10 +98,10 @@ const ac = new AnimationControl(
 );
 ac.state = 0;
 
-// const left = document.getElementById('left') as HTMLButtonElement;
 const stopStart = document.getElementById('stop-start') as HTMLButtonElement;
 const speedButton = document.getElementById('speed') as HTMLInputElement;
-// const right = document.getElementById('right') as HTMLButtonElement;
+const left = document.getElementById('left') as HTMLButtonElement;
+const right = document.getElementById('right') as HTMLButtonElement;
 
 // stopStart.children
 
@@ -110,26 +110,38 @@ let isStart = false;
 
 const spanStatus = document.getElementById('status') as HTMLSpanElement;
 
-const ivent = (delay: number) => {
-	const nextState = ac.lastState + speed * delay / (60 * 1 / 1);
+const setState = (nextState: number) => {
 	if (nextState < 0) {
 		ac.state = 0;
 	} else if (nextState > ac.maxState) {
 		ac.state = ac.maxState;
 	} else {
-		// console.log({ nextState });
 		ac.state = nextState;
 	}
 	spanStatus.innerHTML = ac.state.toFixed(2);
 };
 
-stopStart.addEventListener('click', (e) => {
+const ivent = (delay: number) => {
+	setState(ac.lastState + speed * delay / (60 * 1 / 1));
+};
+
+stopStart.addEventListener('click', () => {
 	isStart = !isStart;
 	console.log('click', { isStart });
 	app.ticker[isStart ? 'add' : 'remove'](ivent);
 	stopStart.innerHTML = isStart ? '&#9208;' : '&#9654;';
 });
 stopStart.innerHTML = isStart ? '&#9208;' : '&#9654;';
+
+left.addEventListener('click', () => {
+	if (isStart) stopStart.click();
+	setState(Math.ceil(ac.state) - 1);
+});
+
+right.addEventListener('click', () => {
+	if (isStart) stopStart.click();
+	setState(Math.floor(ac.state) + 1);
+});
 
 speedButton.addEventListener('input', (e) => {
 	speed = Number(speedButton.value);

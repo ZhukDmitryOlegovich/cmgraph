@@ -3,21 +3,20 @@
 
 <head>
 	<meta charset="utf-8" />
-	<title>GraphicsJS Basic Example</title>
-	<link rel="shortcut icon" href="/favicon.png">
-	<link rel="stylesheet" href="/reset.css">
-	<link rel="stylesheet" href="/main.css">
+	<title>Визуализация и анимация композиции конформных отображений - Курсовая работа Жука Дмитрий ИУ9-52Б</title>
+	<link rel="shortcut icon" href="./static/favicon.png">
+	<link rel="stylesheet" href="./static/reset.css">
+	<link rel="stylesheet" href="./static/main.css">
 </head>
 
 <body style="background-color: #b8b8b8;">
 	<table>
 		<tr>
 			<th>
-
 				<!-- <p>Положение: <input id="range" type="range" min="-200" max="200" step="1" value="100"></p> -->
 				<p>Скорость:
 					<span style="min-width: 50px; display: inline-block;">0.50</span>
-					<input id="speed" type="range" min="-1" max="1" step="0.05" value="0.5"
+					<input id="speed" type="range" min="-2" max="2" step="0.05" value="0.5"
 						oninput="this.parentNode.children[0].innerText = (+this.value).toFixed(2);"
 						onchange="this.parentNode.children[0].innerText = (+this.value).toFixed(2);">
 				</p>
@@ -102,17 +101,11 @@
 			</div>
 		</div>
 	</div>
-	<!-- <script type="module" src="/math/test.js"></script> -->
+	<!-- <script type="module" src="./build/math/test.js"></script> -->
 	<script src="https://pixijs.download/release/pixi.min.js"></script>
-	<!-- <script type="module" src="/graph/test.js"></script> -->
-	<script type="module" src="/graph/test2.js"></script>
-	<script type="module" src="/graph/index.js"></script>
-	<script type="module">
-		console.log(11);
-		setTimeout(() => {
-			console.log(12);
-		}, 1000);
-	</script>
+	<!-- <script type="module" src="./build/graph/test.js"></script> -->
+	<!-- <script type="module" src="./build/graph/test2.js"></script> -->
+	<script type="module" src="./build/graph/index.js"></script>
 </body>
 
 </html>

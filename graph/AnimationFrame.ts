@@ -1,12 +1,13 @@
 import PIXI from 'pixi.js';
 
 import {
-	Circle, GeneralisedCircle,
-	LineThroughZero, NonZeroLine, SimpleComplex,
+	Circle, FillLineThroughZero, FillNonZeroLine, GeneralisedCircle,
+	LineThroughZero, NonZeroLine, SimpleComplex, SimpleFraction,
 } from '@/math';
 
 import { Color } from './color';
 import { createFillStyle, createLineStyle } from './create';
+import { createFillGeneralisedCircle } from './fill';
 import {
 	AppSizeOpt,
 	createGeneralisedCircle, defZoom, setCircle, setLineThroughZero,
@@ -119,6 +120,7 @@ export class AnimationFrame {
 					createFillStyle({ color: Color('gray'), alpha: 0.25 }),
 					createLineStyle({ color: Color('black'), width: 2, alpha: 1 }),
 				);
+
 				graphicsData.push(gd);
 
 				if (from instanceof Circle && gd.shape instanceof PIXI.Circle) {
@@ -221,12 +223,12 @@ export class AnimationFrame {
 
 		// const gd = new PIXI.GraphicsData(
 		// 	createFillGeneralisedCircle(
-		// 		new FillLineThroughZero(
-		// 			new LineThroughZero(new SimpleComplex(
-		// 				new SimpleFraction(1n), new SimpleFraction(2n),
+		// 		new FillNonZeroLine(
+		// 			new NonZeroLine(new SimpleComplex(
+		// 				new SimpleFraction(5n), new SimpleFraction(5n),
 		// 			)),
 		// 			false,
-		// 		), opt,
+		// 		),
 		// 	),
 		// 	createFillStyle({ color: Color('greenyellow'), alpha: 0.25 }),
 		// 	createLineStyle({ color: Color('black'), width: 2, alpha: 1 }),

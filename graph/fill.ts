@@ -14,7 +14,17 @@ export const setFillLine = (
 	console.log({ indexes, points });
 
 	if (indexes.length !== 2) {
-		pp.points = [];
+		console.log({
+			x0, xn, y0, yn, xs: Math.sign(x0 * xn), ys: Math.sign(y0 * yn),
+		});
+		pp.points = Math.sign(x0 * xn) <= 0 && Math.sign(y0 * yn) <= 0
+			? [
+				customOpt.right, customOpt.top,
+				customOpt.left, customOpt.top,
+				customOpt.left, customOpt.bottom,
+				customOpt.right, customOpt.bottom,
+			]
+			: [];
 		return pp;
 	}
 
@@ -75,11 +85,24 @@ export const createFillNonZeroLine = (
 	opt,
 );
 
-export const createFillGeneralisedCircle = (fc: FillGeneralisedCircle, opt?: AppSizeOpt) => (
-	// eslint-disable-next-line no-nested-ternary
-	fc instanceof FillCircle
-		? new PIXI.Polygon() // createCircle(c)
-		: fc instanceof FillNonZeroLine
-			? createFillNonZeroLine(fc, opt)
-			: createFillLineThroughZero(fc, opt)
+export const createPole = ({
+	left, top, right, bottom,
+}: AppSizeOpt = {
+	left: -4, right: 4, top: 4, bottom: -4,
+}) => {
+	left *= defZoom * 1.1;
+	right *= defZoom * 1.1;
+	top *= defZoom * 1.1;
+	bottom *= defZoom * 1.1;
+	return new PIXI.Rectangle(
+		left, top, right - left, top - bottom,
+	);
+};
+
+export const createFillGeneralisedCircle = (
+	fc: FillNonZeroLine | FillLineThroughZero, opt?: AppSizeOpt,
+) => (
+	fc instanceof FillNonZeroLine
+		? createFillNonZeroLine(fc, opt)
+		: createFillLineThroughZero(fc, opt)
 );
