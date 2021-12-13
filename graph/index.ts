@@ -63,39 +63,7 @@ const pole = new PIXI.Graphics(new GraphicsGeometryPP(
 
 app.stage.addChild(pole);
 
-// const Complex = (
-// 	a: bigint,
-// 	b: bigint | null,
-// 	c: bigint,
-// 	d: bigint | null,
-// ) => new SimpleComplex(
-// 	new SimpleFraction(a, b ?? undefined), new SimpleFraction(c, d ?? undefined),
-// );
-
-// const c1 = new Circle(
-// 	Complex(0n, null, 0n, null),
-// 	new SimpleFraction(1n),
-// );
-
-const ac = new AnimationControl(
-	app,
-	[
-		// c1
-	],
-	[
-		// ['move', Complex(2n, null, 0n, null)],
-		// ['rotateAndScale', Complex(0n, null, 1n, null)],
-		// ['move', Complex(0n, null, -1n, null)],
-		// ['inverse'],
-		// ['rotateAndScale', Complex(0n, null, 1n, null)],
-		// ['move', Complex(-1n, 2n, 0n, null)],
-		// ['rotateAndScale', Complex(3n, null, 1n, null)],
-		// ['inverse'],
-		// ['move', Complex(0n, null, -1n, null)],
-		// ['inverse'],
-		// ['inverse'],
-	],
-);
+const ac = new AnimationControl(app, [], []);
 ac.state = 0;
 
 const stopStart = document.getElementById('stop-start') as HTMLButtonElement;
@@ -209,7 +177,7 @@ tranzitAdd.addEventListener('click', () => {
 		[m2r.innerText, m2i.innerText] = SimpleComplexToStrings(a.div(c));
 	};
 
-	console.log({ allInputs, needMobius, newElem }, [m1r, m1i, rr, ri, m2r, m2i]);
+	// console.log({ allInputs, needMobius, newElem }, [m1r, m1i, rr, ri, m2r, m2i]);
 
 	allInputs.forEach((input) => input.addEventListener('change', recalcArgs));
 });
@@ -282,7 +250,7 @@ const refreshAnimationControl = () => {
 			.map(({ select, input }): Action => (select === 'inverse' ? ['inverse'] : [select, input])),
 	);
 
-	// console.log(d, tranzit.getElementsByClassName('block-info'), tranzit);
+	setState(0);
 };
 
 document.getElementById('refresh')!.addEventListener('click', refreshAnimationControl);

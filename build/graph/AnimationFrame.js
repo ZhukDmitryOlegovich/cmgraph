@@ -2,7 +2,7 @@
 import { Circle, LineThroughZero, NonZeroLine, SimpleComplex, } from '../math/index.js';
 import { Color } from './color.js';
 import { createFillStyle, createLineStyle } from './create.js';
-import { createGeneralisedCircle, defZoom, setCircle, setLineThroughZero, } from './math.js';
+import { createGeneralisedCircle, createNonZeroLine, defZoom, setCircle, setLineThroughZero, } from './math.js';
 import { GraphicsGeometryPP } from './pixipp.js';
 export class AnimationFrame {
     constructor(app, froms, action) {
@@ -58,7 +58,7 @@ export class AnimationFrame {
                 bottom: -4 / minScale * Math.SQRT2,
                 zoom: 1 / fromScale,
             };
-            console.log({ opt, fromScale, toScale });
+            // console.log({ opt, fromScale, toScale });
             for (const from of froms) {
                 this.tos.push(from[action[0]](action[1]));
                 graphicsData.push(new PIXI.GraphicsData(createGeneralisedCircle(from, opt), createFillStyle({ color: Color('gray'), alpha: 0.25 }), lineStyle));
@@ -98,12 +98,23 @@ export class AnimationFrame {
                         const x1 = xt / rt * max;
                         const y1 = yt / rt * max;
                         const r1 = Math.sqrt((x1 - xt) ** 2 + (y1 - yt) ** 2);
-                        // console.log({
-                        // 	x0, y0, r0, x1, y1, r1,
-                        // });
+                        console.log({ xt, yt });
+                        const forOne = createNonZeroLine(to);
+                        const forAny = gd.shape;
                         this.rerenderArr.push((proc) => {
-                            // todo: более медленный рост радиуса
-                            setCircle(gd.shape, x0 + (x1 - x0) * proc, y0 + (y1 - y0) * proc, r0 + (r1 - r0) * proc);
+                            proc = Math.min(1, Math.max(proc - AnimationFrame.DELTA_EQUALS_ZERO, 0)
+                                / (1 - 2 * AnimationFrame.DELTA)) ** 3;
+                            if (proc === 1) {
+                                // console.log({proc}, this);
+                                gd.shape = forOne;
+                                gd.type = PIXI.SHAPES.POLY;
+                            }
+                            else {
+                                // todo: более плавный рост радиуса
+                                gd.shape = forAny;
+                                gd.type = PIXI.SHAPES.CIRC;
+                                setCircle(gd.shape, x0 + (x1 - x0) * proc, y0 + (y1 - y0) * proc, r0 + (r1 - r0) * proc);
+                            }
                         });
                     }
                     else {
@@ -189,3 +200,6 @@ export class AnimationFrame {
         this.app.stage.removeChild(this.g);
     }
 }
+AnimationFrame.DELTA = 0.01;
+AnimationFrame.DELTA_EQUALS_ZERO = AnimationFrame.DELTA;
+AnimationFrame.DELTA_EQUALS_ONE = 1 - AnimationFrame.DELTA;

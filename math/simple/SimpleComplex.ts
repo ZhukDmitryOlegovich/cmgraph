@@ -87,10 +87,10 @@ export class SimpleComplex {
 	}
 
 	get inverse(): SimpleComplex {
-		const { sqrlength: { simplification: normalize } } = this;
+		const { sqrlength } = this;
 		return new SimpleComplex(
-			this.realpart.div(normalize),
-			this.imagpart.mul(-1n).div(normalize),
+			this.realpart.div(sqrlength).simplification,
+			this.imagpart.mul(-1n).div(sqrlength).simplification,
 		);
 	}
 

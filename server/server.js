@@ -1,6 +1,5 @@
 const style = require('chalk');
 const express = require('express');
-const path = require('path');
 const { port } = require('./const');
 
 const app = express();

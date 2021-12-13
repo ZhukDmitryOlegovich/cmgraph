@@ -17,6 +17,9 @@ export const setCircle = (pc, x, y, r, { zoom = 1 } = {}) => {
 export const lineInRect = (x0, y0, xn, yn, { left, right, top, bottom, zoom = 1, } = {
     left: -4, right: 4, top: 4, bottom: -4,
 }) => {
+    console.log('lineInRect:', {
+        x0, y0, xn, yn, left, right, top, bottom, zoom,
+    });
     x0 *= zoom * defZoom;
     y0 *= zoom * defZoom;
     xn *= zoom * defZoom;

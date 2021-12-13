@@ -58,16 +58,12 @@ export class AnimationControl {
 		}
 		const ind = Math.floor(nowState);
 		if (this.animFrames[ind] !== this.activeAnimFrame) {
-			// console.log(ind, this.animFrames[ind]);
-			// console.log(this.activeAnimFrame);
 			this.activeAnimFrame?.stop();
 			this.activeAnimFrame = this.animFrames[ind];
-			this.activeAnimFrame.start(nowState - ind); // todo: .?
-			// console.log(this.activeAnimFrame);
+			this.activeAnimFrame.start(nowState - ind);
 		} else {
-			this.activeAnimFrame.rerender(nowState - ind); // todo: .?
+			this.activeAnimFrame.rerender(nowState - ind);
 		}
-		// console.log({ nowState, ind });
 	}
 
 	get state() { return this.lastState; }

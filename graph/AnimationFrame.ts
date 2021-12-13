@@ -1,16 +1,15 @@
 import PIXI from 'pixi.js';
 
 import {
-	Circle, FillLineThroughZero, FillNonZeroLine, GeneralisedCircle,
-	LineThroughZero, NonZeroLine, SimpleComplex, SimpleFraction,
+	Circle, GeneralisedCircle,
+	LineThroughZero, NonZeroLine, SimpleComplex,
 } from '@/math';
 
 import { Color } from './color';
 import { createFillStyle, createLineStyle } from './create';
-import { createFillGeneralisedCircle } from './fill';
 import {
-	AppSizeOpt,
-	createGeneralisedCircle, defZoom, setCircle, setLineThroughZero,
+	AppSizeOpt, createGeneralisedCircle, createNonZeroLine,
+	defZoom, setCircle, setLineThroughZero,
 } from './math';
 import { GraphicsGeometryPP } from './pixipp';
 
@@ -20,6 +19,12 @@ export type ActionType = ActionTypeZero | ActionTypeOne;
 export type Action = [ActionTypeZero] | [ActionTypeOne, SimpleComplex];
 
 export class AnimationFrame {
+	private static DELTA = 0.01;
+
+	private static DELTA_EQUALS_ZERO = AnimationFrame.DELTA;
+
+	private static DELTA_EQUALS_ONE = 1 - AnimationFrame.DELTA;
+
 	public tos: GeneralisedCircle[] = [];
 
 	private gg: GraphicsGeometryPP;
@@ -97,7 +102,7 @@ export class AnimationFrame {
 				zoom: 1 / fromScale,
 			};
 
-			console.log({ opt, fromScale, toScale });
+			// console.log({ opt, fromScale, toScale });
 
 			for (const from of froms) {
 				this.tos.push(from[action[0]](action[1]));
@@ -162,18 +167,31 @@ export class AnimationFrame {
 						const y1 = yt / rt * max;
 						const r1 = Math.sqrt((x1 - xt) ** 2 + (y1 - yt) ** 2);
 
-						// console.log({
-						// 	x0, y0, r0, x1, y1, r1,
-						// });
+						// console.log({ xt, yt });
+						const forOne = createNonZeroLine(to);
+						const forAny = gd.shape;
 
 						this.rerenderArr.push((proc) => {
-							// todo: более медленный рост радиуса
-							setCircle(
-								gd.shape as PIXI.Circle,
-								x0 + (x1 - x0) * proc,
-								y0 + (y1 - y0) * proc,
-								r0 + (r1 - r0) * proc,
-							);
+							proc = Math.min(
+								1,
+								Math.max(proc - AnimationFrame.DELTA_EQUALS_ZERO, 0)
+								/ (1 - 2 * AnimationFrame.DELTA),
+							) ** 3;
+							if (proc === 1) {
+								// console.log({proc}, this);
+								gd.shape = forOne;
+								gd.type = PIXI.SHAPES.POLY;
+							} else {
+								// todo: более плавный рост радиуса
+								gd.shape = forAny;
+								gd.type = PIXI.SHAPES.CIRC;
+								setCircle(
+									gd.shape,
+									x0 + (x1 - x0) * proc,
+									y0 + (y1 - y0) * proc,
+									r0 + (r1 - r0) * proc,
+								);
+							}
 						});
 					} else {
 						AnimationFrame.throwErrorConstructorReturnType();
@@ -214,6 +232,7 @@ export class AnimationFrame {
 					// const donor = new AnimationFrame(app, [from], ['rotateAndScale', to.c.div(from.c)]);
 					// this.rerenderArr.push(donor.rerenderArr[0]);
 				} else {
+					// eslint-disable-next-line no-console
 					console.warn(this, { from, action });
 
 					throw new Error('fatal');

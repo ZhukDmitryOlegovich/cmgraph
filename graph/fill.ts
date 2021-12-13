@@ -1,7 +1,7 @@
 import PIXI from 'pixi.js';
 
 import {
-	FillCircle, FillGeneralisedCircle, FillLineThroughZero, FillNonZeroLine, SimpleComplex,
+	FillLineThroughZero, FillNonZeroLine, SimpleComplex,
 } from '@/math';
 
 import { AppSizeOpt, defZoom, lineInRect } from './math';
@@ -29,7 +29,7 @@ export const setFillLine = (
 	}
 
 	const needSwap = (indexes[1] % 2 === 0 ? indexes[1] - 1 : 0) * xn
-	+ (indexes[1] % 2 === 0 ? 0 : indexes[1] - 2) * yn < 0;
+		+ (indexes[1] % 2 === 0 ? 0 : indexes[1] - 2) * yn < 0;
 
 	const [xmin, ymin, xmax, ymax] = needSwap
 		? [...points.slice(2), ...points.slice(0, 2)]
